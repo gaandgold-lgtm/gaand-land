@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://land.gaandgold.co.kr/sitemap.xml
