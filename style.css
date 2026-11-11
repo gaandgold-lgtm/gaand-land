@@ -36,3 +36,4 @@ footer{padding:24px 0;font-size:12px;color:var(--muted);border-top:1px solid var
 .dlist a{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
 .dlist a span{font-weight:800;font-size:16px}
 .dlist a small{color:var(--muted);font-size:13px;font-weight:500}
+.dlist a[hidden]{display:none}
