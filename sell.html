@@ -3,142 +3,141 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>숭의동 집 내놓기 매물 접수 | 가앤공인중개사사무소</title>
-<meta name="description" content="인천 미추홀구 숭의동·송림동 아파트, 빌라, 원룸, 상가 매물 접수. 1분이면 끝나는 간단 접수, 문자로 바로 전달됩니다. 가앤공인중개사사무소 010-8186-8816">
-<meta property="og:title" content="집 내놓기 1분 접수 · 가앤공인중개사사무소">
-<meta property="og:description" content="숭의동·미추홀구 매매, 전세, 월세 매물 접수. 문자로 바로 전달돼요.">
+<title>미추홀구 집 내놓기 매물 접수 | 숭의동 가앤공인중개사사무소</title>
+<meta name="description" content="인천 미추홀구 숭의동·주안동·용현동·학익동·도화동 아파트, 빌라, 상가 집 내놓기. 버튼 몇 번이면 문자로 접수, 전화도 바로. 가앤공인중개사사무소 010-8186-8816">
+<meta property="og:title" content="집 내놓기 · 가앤공인중개사사무소">
+<meta property="og:description" content="버튼 3번이면 접수 끝. 전화 010-8186-8816">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://land.gaandgold.co.kr/sell.html">
 <meta property="og:image" content="https://land.gaandgold.co.kr/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="style.css">
 <style>
-.f{display:grid;gap:14px}
-.f label{display:grid;gap:6px;font-size:14px;font-weight:600}
-.f input,.f select,.f textarea{font:inherit;font-size:16px;font-weight:400;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:100%}
-.f textarea{min-height:90px;resize:vertical}
-.f input:focus,.f select:focus,.f textarea:focus{outline:2px solid var(--brand2);outline-offset:1px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips input{position:absolute;opacity:0;width:1px;height:1px}
-.chips span{display:inline-block;padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-weight:600;font-size:15px;cursor:pointer}
-.chips input:checked+span{background:var(--brand);border-color:var(--brand);color:#fff}
-.chips input:focus-visible+span{outline:2px solid var(--brand2)}
-.req{color:var(--brand2)}
-button.btn{border:0;width:100%;cursor:pointer;font-family:inherit}
-.msg{font-size:14px;color:#a3324a;min-height:20px}
+body{font-size:19px;padding-bottom:110px}
+.wrap{max-width:520px}
+.hero{padding:26px 0 8px}
+.hero h1{font-size:30px;line-height:1.3;margin:0 0 8px}
+.hero p{font-size:18px;color:var(--ink)}
+.callbox{background:var(--brand);color:#fff;border-radius:18px;padding:18px;margin:18px 0 6px;text-align:center;text-decoration:none;display:block}
+.callbox small{display:block;font-size:17px;opacity:.9}
+.callbox b{display:block;font-size:32px;letter-spacing:.5px;margin-top:2px}
+.or{text-align:center;color:var(--muted);font-size:17px;margin:18px 0 6px}
+.step{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:20px 18px;margin:14px 0;display:grid;gap:14px}
+.step.on{border-color:var(--brand)}
+.step.dim{opacity:.45}
+.num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-weight:800;font-size:19px;margin-right:8px;flex:none}
+.q{display:flex;align-items:center;font-size:22px;font-weight:800;margin:0}
+.choices{display:grid;gap:10px}
+.choices button{font:inherit;font-size:22px;font-weight:700;min-height:64px;border-radius:14px;border:2px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;text-align:left;padding:0 18px}
+.choices button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.choices button[aria-pressed="true"]::after{content:" ✓"}
+input{font:inherit;font-size:21px;width:100%;min-height:62px;padding:0 16px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+input:focus,.choices button:focus-visible,.big:focus-visible{outline:3px solid var(--brand2);outline-offset:2px}
+.hint{font-size:16px;color:var(--muted);margin:-4px 0 0}
+.big{font:inherit;display:flex;align-items:center;justify-content:center;width:100%;min-height:70px;border-radius:16px;border:0;background:var(--brand);color:#fff;font-size:23px;font-weight:800;cursor:pointer;text-decoration:none}
+.big.sub{background:#fff;color:var(--brand);border:2px solid var(--brand)}
+.skip{font:inherit;background:none;border:0;color:var(--brand);font-size:18px;text-decoration:underline;cursor:pointer;justify-self:start;padding:4px 0}
+.err{color:#a3324a;font-size:17px;font-weight:700;margin:0;min-height:0}
+pre{white-space:pre-wrap;font:inherit;font-size:19px;background:var(--soft);border-radius:12px;padding:14px;margin:0}
+.notice{background:#fff4d6;border:2px solid #e8c56a;border-radius:16px;padding:16px;font-size:18px;margin:16px 0}
+.notice b{display:block;font-size:20px;margin-bottom:6px}
+.bar .wrap{grid-template-columns:1fr}
+.bar .btn{height:62px;font-size:21px}
+footer{font-size:14px}
 </style>
 <script src="inapp.js"></script>
 </head>
 <body>
-<header><div class="wrap"><a class="logo" href="./" style="border:0;padding:0;font-size:17px">가앤공인중개사사무소</a><a href="tel:01081868816">📞 전화</a></div></header>
+<header><div class="wrap"><a class="logo" href="./" style="border:0;padding:0;font-size:18px">가앤공인중개사사무소</a></div></header>
 <main class="wrap">
-  <div id="topinapp" hidden style="background:#4a2f6b;color:#fff;border-radius:14px;padding:14px 16px;margin:16px 0 0;font-size:15px;line-height:1.55">
-    <b>인스타그램·카카오톡 안에서 여셨네요.</b><br>이 화면에서는 문자 접수가 안 돼요. 아래 버튼을 누르면 휴대폰 인터넷 앱으로 열려요.
-    <a id="topext" href="#" style="display:flex;align-items:center;justify-content:center;height:50px;margin-top:10px;border-radius:12px;background:#fff;color:#4a2f6b;font-weight:800;text-decoration:none">🌐 인터넷 앱으로 열어 접수하기</a>
-    <span id="iosguide" hidden style="display:block;margin-top:10px;font-size:15px;background:rgba(255,255,255,.14);border-radius:10px;padding:10px 12px">오른쪽 위 <b>⋮</b> (점 3개) 버튼 → <b>외부 브라우저에서 열기</b> 또는 <b>Chrome에서 열기</b>를 눌러주세요.</span>
-  </div>
-
   <div class="hero">
-    <span class="tag">집주인·건물주 전용</span>
-    <h1>집 내놓기<br>1분이면 접수 끝</h1>
-    <p>아래 내용을 적고 <b>접수 내용 만들기</b>를 누르면 문자가 자동으로 작성돼요. 보내기만 누르시면 확인 후 바로 연락드립니다.</p>
+    <h1>집 내놓기</h1>
+    <p>전화 한 통, 또는 아래 버튼 3번이면 끝나요.</p>
   </div>
 
-  <section>
-    <form class="f" id="f" novalidate>
-      <div><div style="font-size:14px;font-weight:600;margin-bottom:6px">거래 종류 <span class="req">*</span></div>
-        <div class="chips">
-          <label><input type="radio" name="deal" value="매매" checked><span>매매</span></label>
-          <label><input type="radio" name="deal" value="전세"><span>전세</span></label>
-          <label><input type="radio" name="deal" value="월세"><span>월세</span></label>
-        </div></div>
-      <div><div style="font-size:14px;font-weight:600;margin-bottom:6px">종류 <span class="req">*</span></div>
-        <div class="chips">
-          <label><input type="radio" name="kind" value="아파트" checked><span>아파트</span></label>
-          <label><input type="radio" name="kind" value="빌라"><span>빌라</span></label>
-          <label><input type="radio" name="kind" value="원룸·투룸"><span>원룸·투룸</span></label>
-          <label><input type="radio" name="kind" value="상가·사무실"><span>상가·사무실</span></label>
-          <label><input type="radio" name="kind" value="주택·건물"><span>주택·건물</span></label>
-        </div></div>
-      <label>단지명 또는 주소 <span class="req">*</span>
-        <input name="addr" placeholder="예) 도원역 퍼스트하임 101동" autocomplete="street-address"></label>
-      <label>평형 또는 면적
-        <input name="size" placeholder="예) 84㎡, 25평"></label>
-      <label>원하시는 가격
-        <input name="price" placeholder="예) 매매 3억 / 보증금 1000 월 60"></label>
-      <label>입주 가능 시기
-        <select name="when"><option>바로 가능</option><option>1개월 이내</option><option>2~3개월 후</option><option>협의</option></select></label>
-      <label>성함 <span class="req">*</span>
-        <input name="name" placeholder="예) 홍길동" autocomplete="name"></label>
-      <label>연락받으실 번호 <span class="req">*</span>
-        <input name="tel" type="tel" inputmode="tel" placeholder="010-0000-0000" autocomplete="tel"></label>
-      <label>남기실 말씀
-        <textarea name="memo" placeholder="예) 세입자 있음, 내부 수리 완료, 통화 가능한 시간 등"></textarea></label>
-      <p class="msg" id="msg" role="alert"></p>
-      <button class="btn call" type="submit">📩 접수 내용 만들기</button>
-      <a class="btn sms" href="tel:01081868816">📞 그냥 전화로 접수하기</a>
-      <p class="note">적어주신 내용은 사장님 휴대폰 문자로만 전달되며, 이 페이지에는 저장되지 않아요.</p>
-    </form>
-  </section>
+  <div class="notice" id="inapp" hidden>
+    <b>문자 보내기가 안 되면</b>
+    아래 <b style="display:inline;font-size:inherit">전화하기</b>를 누르시거나, 오른쪽 위 <b style="display:inline;font-size:inherit">⋮</b> 또는 <b style="display:inline;font-size:inherit">···</b> 버튼 → <b style="display:inline;font-size:inherit">다른 브라우저로 열기</b>를 눌러주세요.
+  </div>
 
-  <section id="done" hidden>
-    <h2>접수 내용이 준비됐어요</h2>
-    <p class="note" id="inapp" hidden style="background:var(--soft);border-radius:12px;padding:12px 14px;color:var(--ink);font-size:14.5px">인스타그램·카카오톡 안에서 열면 문자 앱이 안 열릴 수 있어요. <b>내용 복사하기</b>를 누른 뒤 휴대폰 문자앱을 열어 <b>010-8186-8816</b>에게 붙여넣어 보내주세요. 또는 <b>크롬으로 열기</b>로 다시 접수해 주세요.</p>
-    <pre id="sumtxt" style="white-space:pre-wrap;font-family:inherit;font-size:15px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0"></pre>
-    <div class="btns">
-      <a class="btn call" id="smsbtn" href="sms:01081868816">📩 문자 앱으로 보내기</a>
-      <button class="btn sms" type="button" id="copybtn">📋 내용 복사하기</button>
-      <a class="btn sms" id="extbtn" href="#" hidden>🌐 인터넷 앱으로 열기</a>
-      <a class="btn sms" href="tel:01081868816">📞 전화로 접수하기 010-8186-8816</a>
+  <a class="callbox" href="tel:01081868816">
+    <small>📞 누르면 바로 전화 연결</small>
+    <b>010-8186-8816</b>
+  </a>
+
+  <p class="or">― 또는 문자로 내놓기 ―</p>
+
+  <section class="step on" id="s1" aria-labelledby="q1">
+    <p class="q" id="q1"><span class="num">1</span>무엇을 하실 건가요?</p>
+    <div class="choices" data-name="deal">
+      <button type="button" aria-pressed="false" data-v="매매(팔기)">집을 팔고 싶어요</button>
+      <button type="button" aria-pressed="false" data-v="전세 놓기">전세를 놓고 싶어요</button>
+      <button type="button" aria-pressed="false" data-v="월세 놓기">월세를 놓고 싶어요</button>
     </div>
   </section>
+
+  <section class="step dim" id="s2" aria-labelledby="q2">
+    <p class="q" id="q2"><label for="addr" style="display:flex;align-items:center"><span class="num">2</span>어느 집인가요?</label></p>
+    <input id="addr" type="text" placeholder="예) 파크메종 101동 1203호" autocomplete="street-address">
+    <p class="hint">아파트 이름이나 주소만 적어도 돼요.</p>
+    <p class="err" id="err2" role="alert"></p>
+    <button type="button" class="big" id="next2">다음</button>
+  </section>
+
+  <section class="step dim" id="s3" aria-labelledby="q3">
+    <p class="q" id="q3"><label for="price" style="display:flex;align-items:center"><span class="num">3</span>원하시는 가격은요?</label></p>
+    <input id="price" type="text" placeholder="예) 3억 5천 / 보증금 1000에 월 60">
+    <button type="button" class="skip" id="noprice">잘 모르겠어요 (상담 후 결정)</button>
+    <button type="button" class="big" id="next3">다음</button>
+  </section>
+
+  <section class="step dim" id="s4" aria-labelledby="q4">
+    <p class="q" id="q4"><span class="num">✓</span>이대로 보내드릴게요</p>
+    <pre id="preview"></pre>
+    <p class="hint">보내시는 휴대폰 번호로 연락드려요. 연락처는 따로 안 적으셔도 돼요.</p>
+    <a class="big" id="send" href="sms:01081868816">📩 문자 보내기</a>
+    <button type="button" class="big sub" id="copy">내용 복사하기</button>
+    <p class="hint">문자 앱이 열리면 <b>보내기(▶)</b>만 누르시면 끝이에요.</p>
+  </section>
+
   <section>
-    <h2>접수 후 진행</h2>
-    <ul class="check">
-      <li>확인 후 당일 연락드립니다</li>
-      <li>최근 실거래 기준으로 시세를 안내합니다</li>
-      <li>중개보수는 계약 전에 미리 안내합니다</li>
+    <h2 style="font-size:21px">접수하시면</h2>
+    <ul class="check" style="font-size:18px">
+      <li>그날 바로 연락드려요</li>
+      <li>최근 실거래 가격으로 시세를 알려드려요</li>
+      <li>중개보수는 계약 전에 미리 안내해요</li>
     </ul>
   </section>
 </main>
-<footer><div class="wrap">© 가앤공인중개사사무소 · 인천 미추홀구 새천년로5번길 45 · 등록번호 28177-2026-00054</div></footer>
+<footer><div class="wrap">가앤공인중개사사무소 · 대표 가현지 · 인천 미추홀구 새천년로5번길 45 · 등록번호 28177-2026-00054</div></footer>
 <div class="bar"><div class="wrap">
-  <a class="btn call" href="tel:01081868816">📞 전화 상담</a>
-  <a class="btn sms" href="sms:01081868816">💬 문자</a>
+  <a class="btn call" href="tel:01081868816">📞 전화하기 010-8186-8816</a>
 </div></div>
 <script>
 (function(){
-var ua=navigator.userAgent||'',isIOS=/iPhone|iPad|iPod/.test(ua),isAnd=/Android/i.test(ua);
-var inApp=/Instagram|FBAN|FBAV|KAKAOTALK|NAVER|Line\/|DaumApps|everytimeApp|BAND/i.test(ua);
-var f=document.getElementById('f'),m=document.getElementById('msg'),done=document.getElementById('done');
-var ext=document.getElementById('extbtn'),url='https://land.gaandgold.co.kr/sell.html',extHref=(window.GAAND_EXT&&GAAND_EXT(url))||'';
-
-if(inApp){
-  document.getElementById('inapp').hidden=false;document.getElementById('topinapp').hidden=false;
-  if(extHref){ext.href=extHref;ext.hidden=false;document.getElementById('topext').href=extHref}
-  else{document.getElementById('topext').style.display='none';document.getElementById('iosguide').hidden=false}
-  document.getElementById('smsbtn').style.display='none';
-  var cb=document.getElementById('copybtn');cb.className='btn call';
-  document.querySelectorAll('a[href^="sms:"]').forEach(function(a){if(a.id==='smsbtn')return;a.removeAttribute('href');a.textContent='📋 번호 복사';a.style.cursor='pointer';
-    a.addEventListener('click',function(){copy('01081868816');a.textContent='✅ 복사됨'})});
-}
-function copy(t){var x=document.createElement('textarea');x.value=t;x.setAttribute('readonly','');x.style.position='fixed';x.style.opacity='0';document.body.appendChild(x);x.select();x.setSelectionRange(0,t.length);var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(x);
-  if(!ok&&navigator.clipboard){navigator.clipboard.writeText(t).catch(function(){})}return true}
-var txt='';
-f.addEventListener('submit',function(e){
-  e.preventDefault();var v=function(n){return (f.elements[n].value||'').trim()};
-  if(!v('addr')){m.textContent='단지명 또는 주소를 적어주세요.';f.elements.addr.focus();return}
-  if(!v('name')){m.textContent='성함을 적어주세요.';f.elements.name.focus();return}
-  if(v('tel').replace(/\D/g,'').length<9){m.textContent='연락받으실 번호를 확인해주세요.';f.elements.tel.focus();return}
-  m.textContent='';
-  txt='[가앤 매물접수]\n'+f.elements.deal.value+' / '+f.elements.kind.value+'\n주소: '+v('addr')+
-    (v('size')?'\n면적: '+v('size'):'')+(v('price')?'\n희망가: '+v('price'):'')+
-    '\n입주: '+v('when')+'\n성함: '+v('name')+'\n연락처: '+v('tel')+(v('memo')?'\n메모: '+v('memo'):'');
-  document.getElementById('sumtxt').textContent=txt;
-  document.getElementById('smsbtn').href='sms:01081868816'+(isIOS?'&':'?')+'body='+encodeURIComponent(txt);
-  done.hidden=false;done.scrollIntoView({behavior:'smooth',block:'start'});
-});
-document.getElementById('copybtn').addEventListener('click',function(){copy(txt);this.textContent='✅ 복사됨 · 문자앱에서 010-8186-8816에게 붙여넣기'});
+var ua=navigator.userAgent||'',isIOS=/iPhone|iPad|iPod/.test(ua);
+var inApp=/Instagram|FBAN|FBAV|KAKAOTALK|NAVER|Line\/|DaumApps|BAND/i.test(ua);
+if(inApp)document.getElementById('inapp').hidden=false;
+var data={deal:'',addr:'',price:''};
+function $(id){return document.getElementById(id)}
+function open(n){for(var i=1;i<=4;i++){var s=$('s'+i);s.classList.toggle('on',i===n);s.classList.toggle('dim',i>n)}
+  var t=$('s'+n);if(t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'start'});
+  var inp=t.querySelector('input');if(inp)setTimeout(function(){inp.focus()},350)}
+document.querySelectorAll('.choices button').forEach(function(b){b.addEventListener('click',function(){
+  b.parentNode.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+  data.deal=b.getAttribute('data-v');open(2)})});
+$('next2').addEventListener('click',function(){var v=$('addr').value.trim();
+  if(!data.deal){open(1);return}
+  if(!v){$('err2').textContent='집 이름이나 주소를 적어주세요';$('addr').focus();return}
+  $('err2').textContent='';data.addr=v;open(3)});
+$('addr').addEventListener('keydown',function(e){if(e.key==='Enter')$('next2').click()});
+$('price').addEventListener('keydown',function(e){if(e.key==='Enter')$('next3').click()});
+function finish(p){data.price=p;var t='[가앤 집 내놓기]\n'+data.deal+'\n집: '+data.addr+'\n희망가: '+data.price;
+  $('preview').textContent=t;$('send').href='sms:01081868816'+(isIOS?'&':'?')+'body='+encodeURIComponent(t);open(4)}
+$('next3').addEventListener('click',function(){finish($('price').value.trim()||'상담 후 결정')});
+$('noprice').addEventListener('click',function(){$('price').value='';finish('상담 후 결정')});
+$('copy').addEventListener('click',function(){var t=$('preview').textContent,x=document.createElement('textarea');x.value=t;x.style.position='fixed';x.style.opacity='0';document.body.appendChild(x);x.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(x);
+  if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});this.textContent='✅ 복사됐어요 · 문자에 붙여넣어 010-8186-8816으로';});
 })();
 </script>
 </body>
