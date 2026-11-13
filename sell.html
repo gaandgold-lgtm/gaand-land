@@ -34,7 +34,7 @@ button.btn{border:0;width:100%;cursor:pointer;font-family:inherit}
   <div class="hero">
     <span class="tag">집주인·건물주 전용</span>
     <h1>집 내놓기<br>1분이면 접수 끝</h1>
-    <p>아래 내용을 적고 <b>접수하기</b>를 누르면 문자가 자동으로 작성돼요. 보내기만 누르시면 확인 후 바로 연락드립니다.</p>
+    <p>아래 내용을 적고 <b>접수 내용 만들기</b>를 누르면 문자가 자동으로 작성돼요. 보내기만 누르시면 확인 후 바로 연락드립니다.</p>
   </div>
 
   <section>
@@ -68,12 +68,23 @@ button.btn{border:0;width:100%;cursor:pointer;font-family:inherit}
       <label>남기실 말씀
         <textarea name="memo" placeholder="예) 세입자 있음, 내부 수리 완료, 통화 가능한 시간 등"></textarea></label>
       <p class="msg" id="msg" role="alert"></p>
-      <button class="btn call" type="submit">📩 접수하기 (문자로 보내기)</button>
+      <button class="btn call" type="submit">📩 접수 내용 만들기</button>
       <a class="btn sms" href="tel:01081868816">📞 그냥 전화로 접수하기</a>
       <p class="note">적어주신 내용은 사장님 휴대폰 문자로만 전달되며, 이 페이지에는 저장되지 않아요.</p>
     </form>
   </section>
 
+  <section id="done" hidden>
+    <h2>접수 내용이 준비됐어요</h2>
+    <p class="note" id="inapp" hidden style="background:var(--soft);border-radius:12px;padding:12px 14px;color:var(--ink);font-size:14.5px">인스타그램·카카오톡 안에서 열면 문자 앱이 안 열릴 수 있어요. 아래 <b>내용 복사하기</b>를 누른 뒤 <b>010-8186-8816</b>으로 문자에 붙여넣거나, <b>크롬으로 열기</b>를 눌러 다시 접수해 주세요.</p>
+    <pre id="sumtxt" style="white-space:pre-wrap;font-family:inherit;font-size:15px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0"></pre>
+    <div class="btns">
+      <a class="btn call" id="smsbtn" href="sms:01081868816">📩 문자 앱으로 보내기</a>
+      <button class="btn sms" type="button" id="copybtn">📋 내용 복사하기</button>
+      <a class="btn sms" id="extbtn" href="#" hidden>🌐 크롬(기본 브라우저)으로 열기</a>
+      <a class="btn sms" href="tel:01081868816">📞 전화로 접수하기 010-8186-8816</a>
+    </div>
+  </section>
   <section>
     <h2>접수 후 진행</h2>
     <ul class="check">
@@ -89,19 +100,35 @@ button.btn{border:0;width:100%;cursor:pointer;font-family:inherit}
   <a class="btn sms" href="sms:01081868816">💬 문자</a>
 </div></div>
 <script>
-document.getElementById('f').addEventListener('submit',function(e){
-  e.preventDefault();var f=e.target,v=function(n){return (f.elements[n].value||'').trim()};
-  var m=document.getElementById('msg');
+(function(){
+var ua=navigator.userAgent||'',isIOS=/iPhone|iPad|iPod/.test(ua),isAnd=/Android/i.test(ua);
+var inApp=/Instagram|FBAN|FBAV|KAKAOTALK|NAVER|Line\/|DaumApps|everytimeApp|BAND/i.test(ua);
+var f=document.getElementById('f'),m=document.getElementById('msg'),done=document.getElementById('done');
+var ext=document.getElementById('extbtn'),url='https://land.gaandgold.co.kr/sell.html';
+if(inApp){document.getElementById('inapp').hidden=false;
+  if(/KAKAOTALK/i.test(ua)){ext.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url);ext.hidden=false}
+  else if(isAnd){ext.href='intent://land.gaandgold.co.kr/sell.html#Intent;scheme=https;package=com.android.chrome;end';ext.hidden=false}
+}
+var txt='';
+f.addEventListener('submit',function(e){
+  e.preventDefault();var v=function(n){return (f.elements[n].value||'').trim()};
   if(!v('addr')){m.textContent='단지명 또는 주소를 적어주세요.';f.elements.addr.focus();return}
   if(!v('name')){m.textContent='성함을 적어주세요.';f.elements.name.focus();return}
   if(v('tel').replace(/\D/g,'').length<9){m.textContent='연락받으실 번호를 확인해주세요.';f.elements.tel.focus();return}
   m.textContent='';
-  var t='[가앤 매물접수]\n'+f.deal.value+' / '+f.kind.value+'\n주소: '+v('addr')+
+  txt='[가앤 매물접수]\n'+f.elements.deal.value+' / '+f.elements.kind.value+'\n주소: '+v('addr')+
     (v('size')?'\n면적: '+v('size'):'')+(v('price')?'\n희망가: '+v('price'):'')+
     '\n입주: '+v('when')+'\n성함: '+v('name')+'\n연락처: '+v('tel')+(v('memo')?'\n메모: '+v('memo'):'');
-  var sep=/iPhone|iPad|iPod/.test(navigator.userAgent)?'&':'?';
-  location.href='sms:01081868816'+sep+'body='+encodeURIComponent(t);
+  document.getElementById('sumtxt').textContent=txt;
+  document.getElementById('smsbtn').href='sms:01081868816'+(isIOS?'&':'?')+'body='+encodeURIComponent(txt);
+  done.hidden=false;done.scrollIntoView({behavior:'smooth',block:'start'});
 });
+document.getElementById('copybtn').addEventListener('click',function(){
+  var b=this,ok=function(){b.textContent='✅ 복사됨 · 문자에 붙여넣어 010-8186-8816으로 보내주세요'};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(ok,fb)}else fb();
+  function fb(){var t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');ok()}catch(e){}document.body.removeChild(t)}
+});
+})();
 </script>
 </body>
 </html>
