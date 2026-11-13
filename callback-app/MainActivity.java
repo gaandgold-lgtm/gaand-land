@@ -35,6 +35,11 @@ public class MainActivity extends Activity {
     EditText test;
     TextView diag;
     TextView logv;
+    TextView lic;
+    EditText code;
+    EditText[] info = new EditText[4];
+    static final String[] INFO_KEY = {"biz", "name", "phone", "link"};
+    static final String[] INFO_HINT = {"상호 (예: 행복부동산)", "이름 (예: 홍길동)", "연락처 (예: 010-1234-5678)", "링크 - 선택 (예: 블로그·스마트스토어 주소)"};
 
     int dp(int v) { return (int) (v * getResources().getDisplayMetrics().density); }
 
@@ -102,6 +107,32 @@ public class MainActivity extends Activity {
         l.addView(btn("① 권한 허용하기", true, v -> req()));
         l.addView(btn("② 배터리 절전에서 빼기", false, v -> batt()));
 
+        if (License.need(this)) {
+            l.addView(tv("\n사용 기간", 19, true, PURPLE));
+            lic = tv("", 17, true, 0xFF333333);
+            l.addView(lic);
+            l.addView(tv("내 기기번호: " + License.devCode(this), 18, true, 0xFF111111));
+            l.addView(btn("구매 문의 문자 보내기", false, v -> buy()));
+            code = new EditText(this);
+            code.setHint("받은 사용 코드 붙여넣기");
+            code.setTextSize(15);
+            code.setMaxLines(4);
+            l.addView(code);
+            l.addView(btn("사용 코드 등록", true, v -> activate(code.getText().toString())));
+
+            l.addView(tv("\n내 정보 (문자에 자동으로 들어가요)", 19, true, PURPLE));
+            for (int i = 0; i < 4; i++) {
+                info[i] = new EditText(this);
+                info[i].setHint(INFO_HINT[i]);
+                info[i].setTextSize(17);
+                info[i].setText(Core.p(this).getString(INFO_KEY[i], ""));
+                if (i == 2) info[i].setInputType(InputType.TYPE_CLASS_PHONE);
+                if (i == 3) info[i].setInputType(InputType.TYPE_TEXT_VARIATION_URI | InputType.TYPE_CLASS_TEXT);
+                l.addView(info[i]);
+            }
+            l.addView(tv("문구 안의 {상호} {이름} {연락처} {링크} 자리에 위 정보가 들어가요. 링크를 비우면 그 줄은 빠져요.", 14, false, 0xFF666666));
+        }
+
         for (int k = 0; k < 3; k++) {
             l.addView(tv("\n" + Core.label(k) + " 끝나면 보낼 문자", 19, true, PURPLE));
             sw[k] = new Switch(this);
@@ -109,7 +140,7 @@ public class MainActivity extends Activity {
             sw[k].setTextSize(17);
             sw[k].setChecked(Core.on(this, k));
             l.addView(sw[k]);
-            ed[k] = box(Core.msg(this, k));
+            ed[k] = box(Core.raw(this, k));
             l.addView(ed[k]);
         }
         l.addView(tv("", 6, false, 0));
@@ -133,6 +164,7 @@ public class MainActivity extends Activity {
             String n = Core.clean(test.getText().toString());
             if (n.length() < 10) { toast("번호를 적어주세요"); return; }
             if (!allOk()) { toast("먼저 ① 권한 허용하기를 눌러주세요"); return; }
+            if (!License.ok(this)) { toast("사용 기간이 끝났어요. 사용 코드를 넣어주세요"); return; }
             Core.p(this).edit().remove("err").apply();
             Core.ask(this, n, "테스트", 0, 99999);
             diag.setText("확인 중…");
@@ -145,6 +177,31 @@ public class MainActivity extends Activity {
         logv = tv("", 14, false, 0xFF444444);
         l.addView(logv);
         setContentView(sv);
+        handleLink(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent i) { super.onNewIntent(i); handleLink(i); }
+
+    void handleLink(Intent i) {
+        if (i == null || i.getData() == null || !License.need(this)) return;
+        String c = i.getData().getQueryParameter("c");
+        if (c != null) activate(c);
+    }
+
+    void activate(String c) {
+        long ex = License.check(this, c);
+        if (ex < 0) { toast("코드가 맞지 않아요. 기기번호를 다시 확인해 주세요"); return; }
+        Core.p(this).edit().putString("lic", c.trim()).apply();
+        if (code != null) code.setText("");
+        refresh();
+        toast("등록됐어요! " + License.dayStr(ex) + "까지 사용할 수 있어요");
+    }
+
+    void buy() {
+        String body = getString(R.string.app_name) + " 사용 코드 구매 문의\n기기번호: " + License.devCode(this);
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + getString(R.string.seller_phone))).putExtra("sms_body", body);
+        try { startActivity(i); } catch (Exception e) { toast("문자 앱을 열 수 없어요"); }
     }
 
     String[] perms() {
@@ -202,6 +259,7 @@ public class MainActivity extends Activity {
             e.putString("m_" + Core.key(k), ed[k].getText().toString().trim());
         }
         e.putBoolean("once", once.isChecked());
+        if (License.need(this)) for (int i = 0; i < 4; i++) e.putString(INFO_KEY[i], info[i].getText().toString().trim());
         e.apply();
     }
 
@@ -212,6 +270,10 @@ public class MainActivity extends Activity {
     }
 
     void refresh() {
+        if (lic != null) {
+            lic.setText(License.status(this));
+            lic.setTextColor(License.ok(this) ? 0xFF2F7D5B : 0xFFB00020);
+        }
         PowerManager pm = getSystemService(PowerManager.class);
         boolean batt = pm != null && pm.isIgnoringBatteryOptimizations(getPackageName());
         if (allOk() && batt) {

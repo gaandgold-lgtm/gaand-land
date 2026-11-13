@@ -29,9 +29,28 @@ public class Core {
     static SharedPreferences p(Context c) { return c.getSharedPreferences("cfg", 0); }
     static String key(int k) { return k == 0 ? "in" : k == 1 ? "out" : "miss"; }
     static String label(int k) { return k == 0 ? "받은 전화" : k == 1 ? "건 전화" : "부재중 전화"; }
+    static String raw(Context c, int k) { return p(c).getString("m_" + key(k), def(c, k)); }
+
     static String msg(Context c, int k) {
-        return p(c).getString("m_" + key(k), def(c, k));
+        return fill(c, p(c).getString("m_" + key(k), def(c, k)));
     }
+
+    static String fill(Context c, String t) {
+        SharedPreferences sp = p(c);
+        String[][] r = {{"{상호}", sp.getString("biz", "").trim()}, {"{이름}", sp.getString("name", "").trim()},
+                {"{연락처}", sp.getString("phone", "").trim()}, {"{링크}", sp.getString("link", "").trim()}};
+        StringBuilder o = new StringBuilder();
+        for (String line : t.split("\n", -1)) {
+            boolean had = line.contains("{");
+            String x = line;
+            for (String[] kv : r) x = x.replace(kv[0], kv[1]);
+            if (had && x.trim().length() == 0) continue;
+            if (o.length() > 0) o.append("\n");
+            o.append(x.replaceAll(" {2,}", " "));
+        }
+        return o.toString().trim();
+    }
+
     static boolean on(Context c, int k) { return p(c).getBoolean("on_" + key(k), true); }
 
     static void log(Context c, String s) {
@@ -87,6 +106,7 @@ public class Core {
 
     static synchronized void check(Context c) {
         if (c.checkSelfPermission(Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) return;
+        if (!License.ok(c)) { log(c, "사용 기간이 끝나 알림을 띄우지 않았어요"); return; }
         Cursor cur = null;
         try {
             cur = c.getContentResolver().query(CallLog.Calls.CONTENT_URI,
