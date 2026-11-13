@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>가앤 콜명함 사용기간 관리</title>
+<style>
+:root{--b:#4A2F6B;--bg:#F7F5FA;--card:#fff;--ink:#1B1A22;--mut:#666;--line:#DDD6E6;--ok:#2F7D5B;--bad:#B3261E}
+@media (prefers-color-scheme:dark){:root{--bg:#141218;--card:#1E1B24;--ink:#EEE;--mut:#AAA;--line:#3A3346}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;font-size:17px;padding:18px 16px 60px}
+.w{max-width:560px;margin:0 auto}h1{font-size:23px;margin:4px 0 4px}h2{font-size:19px;margin:24px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
+input,select{font:inherit;width:100%;padding:12px;border:2px solid var(--line);border-radius:12px;background:transparent;color:inherit}
+button{font:inherit;font-weight:800;min-height:48px;border:0;border-radius:12px;background:var(--b);color:#fff;padding:0 14px}
+button.s{background:transparent;color:var(--b);border:2px solid var(--b)}button.r{background:transparent;color:var(--bad);border:2px solid var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.row>*{flex:1}
+.dev{font-size:20px;font-weight:800;letter-spacing:.5px}.mut{color:var(--mut);font-size:14px}
+.ok{color:var(--ok);font-weight:800}.bad{color:var(--bad);font-weight:800}
+ol{padding-left:20px}li{margin:6px 0}
+#msg{position:sticky;top:0;z-index:2;font-weight:800;padding:8px 0;min-height:20px;background:var(--bg)}
+</style></head><body><div class="w">
+<h1>가앤 콜명함 사용기간 관리</h1>
+<p class="mut">기기번호마다 언제까지 쓸 수 있는지 정해요. 저장하면 5분 안에 반영되고, 앱은 열 때나 3시간마다 확인해요.</p>
+<div id="msg"></div>
+
+<div id="setup" class="card" hidden>
+<b>처음 한 번만: 열쇠(토큰) 넣기</b>
+<ol class="mut">
+<li>PC나 휴대폰 브라우저에서 GitHub 로그인 후 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">이 링크</a> 열기</li>
+<li>Token name: <b>콜명함관리</b> / Expiration: <b>No expiration</b>(또는 1년)</li>
+<li>Repository access: <b>Only select repositories</b> → <b>gaand-land</b></li>
+<li>Permissions → Repository permissions → <b>Contents</b>: <b>Read and write</b></li>
+<li>맨 아래 <b>Generate token</b> → 나온 글자(github_pat_로 시작) 복사</li>
+<li>아래 칸에 붙여넣고 저장. 이 휴대폰에만 저장돼요. 남에게 보여주지 마세요.</li>
+</ol>
+<input id="tok" placeholder="github_pat_... 붙여넣기" autocomplete="off">
+<div class="row"><button id="savetok">저장하고 시작</button></div>
+</div>
+
+<div id="main" hidden>
+<h2>새 기기 등록</h2>
+<div class="card">
+<input id="ndev" placeholder="기기번호 8자리 (예: 3F2A-91BC)" autocapitalize="characters" autocomplete="off">
+<div class="row"><select id="nper"><option value="1">1개월</option><option value="3">3개월</option><option value="6">6개월</option><option value="12" selected>1년</option><option value="0">날짜 직접</option></select><input id="nday" type="date" hidden></div>
+<input id="nmemo" placeholder="메모 (이 휴대폰에만 저장, 예: 행복부동산)" style="margin-top:8px">
+<div class="row"><button id="add">등록하기</button></div>
+</div>
+<h2>등록된 기기 <span id="cnt" class="mut"></span></h2>
+<div id="list"></div>
+<p class="mut">⚠️ 기기번호와 날짜는 앱이 읽을 수 있게 인터넷에 공개된 파일에 저장돼요. 이름·전화번호는 메모(이 휴대폰에만 저장)에만 적으세요.</p>
+<div class="row"><button class="s" id="reload">새로고침</button><button class="r" id="logout">열쇠 지우기</button></div>
+</div>
+</div>
+<script>
+const REPO='gaandgold-lgtm/gaand-land',PATH='lic.json',API='https://api.github.com/repos/'+REPO+'/contents/'+PATH;
+const $=id=>document.getElementById(id);
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let tok=ls.get('ghtok',''),sha=null,data={v:1,list:[]};
+const memos=()=>{try{return JSON.parse(ls.get('memos','{}'))}catch(e){return{}}};
+function msg(t,c){$('msg').textContent=t;$('msg').className=c||''}
+function hex(s){return (s||'').toUpperCase().replace(/[^0-9A-F]/g,'')}
+function fmtD(h){return h.slice(0,4)+'-'+h.slice(4)}
+function today(){const n=new Date(Date.now()+9*3600e3);return new Date(Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()))}
+function iso(d){return d.toISOString().slice(0,10)}
+function addM(base,m){const d=new Date(base);d.setUTCMonth(d.getUTCMonth()+m);return d}
+function parse(s){const p=s.split('-').map(Number);return new Date(Date.UTC(p[0],p[1]-1,p[2]))}
+function kor(s){const d=parse(s);return d.getUTCFullYear()>=2090?'제한 없음':d.getUTCFullYear()+'.'+(d.getUTCMonth()+1)+'.'+d.getUTCDate()}
+function b64e(s){return btoa(unescape(encodeURIComponent(s)))}function b64d(s){return decodeURIComponent(escape(atob(s.replace(/\n/g,''))))}
+async function gh(method,body){const r=await fetch(API+(method==='GET'?'?t='+Date.now():''),{method,headers:{'Authorization':'Bearer '+tok,'Accept':'application/vnd.github+json'},body:body?JSON.stringify(body):undefined});if(!r.ok)throw new Error(r.status===401?'열쇠(토큰)가 맞지 않아요':r.status===404?'파일을 찾을 수 없거나 권한이 없어요':r.status===409?'다른 곳에서 바뀌었어요. 새로고침 후 다시':'오류 '+r.status);return r.json()}
+async function load(){msg('불러오는 중…');try{const j=await gh('GET');sha=j.sha;data=JSON.parse(b64d(j.content));if(!data.list)data.list=[];render();msg('')}catch(e){msg(e.message,'bad');if(/열쇠/.test(e.message)){$('setup').hidden=false;$('main').hidden=true}}}
+async function save(note){msg('저장 중…');try{data.list.sort((a,b)=>a.d.localeCompare(b.d));const j=await gh('PUT',{message:'사용기간 변경: '+note,content:b64e(JSON.stringify(data)),sha});sha=j.content.sha;render();msg('✓ 저장했어요 ('+note+') · 5분 안에 반영돼요','ok')}catch(e){msg(e.message,'bad');await load()}}
+function render(){const M=memos(),t=iso(today());$('list').innerHTML='';$('cnt').textContent='('+data.list.length+')';
+ data.list.forEach((r,i)=>{const c=document.createElement('div');c.className='card';const live=r.e>=t;
+  c.innerHTML='<div class="dev"></div><div class="mut memo"></div><div><span class="st"></span></div><div class="row"><button class="s" data-a="1">+1개월</button><button class="s" data-a="12">+1년</button><button class="s" data-a="d">날짜</button></div><div class="row"><button class="r" data-a="x">지금 중지</button><button class="r" data-a="del">삭제</button></div><input type="date" class="dd" hidden>';
+  c.querySelector('.dev').textContent=fmtD(r.d);c.querySelector('.memo').textContent=M[r.d]||'';
+  const st=c.querySelector('.st');st.textContent=(live?'사용 중 · ':'중지됨 · ')+kor(r.e)+(live&&kor(r.e)!=='제한 없음'?'까지':'');st.className=live?'ok':'bad';
+  c.querySelectorAll('button').forEach(b=>b.onclick=async()=>{const a=b.dataset.a;
+   if(a==='d'){const dd=c.querySelector('.dd');dd.hidden=false;dd.value=r.e;dd.onchange=()=>{if(dd.value){r.e=dd.value;save(fmtD(r.d)+' '+dd.value+'까지')}};dd.showPicker&&dd.showPicker();return}
+   if(a==='x'){if(!confirm(fmtD(r.d)+' 지금 바로 못 쓰게 할까요?'))return;r.e=iso(new Date(today().getTime()-864e5));return save(fmtD(r.d)+' 중지')}
+   if(a==='del'){if(!confirm(fmtD(r.d)+' 목록에서 지울까요? (바로 못 쓰게 돼요)'))return;data.list.splice(i,1);return save(fmtD(r.d)+' 삭제')}
+   const base=r.e>=t?parse(r.e):today();r.e=iso(addM(base,+a));save(fmtD(r.d)+' +'+(a==='12'?'1년':'1개월'))})
+  ;$('list').appendChild(c)})}
+$('nper').onchange=()=>{$('nday').hidden=$('nper').value!=='0'};
+$('add').onclick=async()=>{const h=hex($('ndev').value);if(h.length!==8){msg('기기번호 8자리를 확인해 주세요 (0~9, A~F)','bad');return}
+ let e;if($('nper').value==='0'){if(!$('nday').value){msg('날짜를 골라주세요','bad');return}e=$('nday').value}else e=iso(addM(today(),+$('nper').value));
+ const m=memos();if($('nmemo').value.trim()){m[h]=$('nmemo').value.trim();ls.set('memos',JSON.stringify(m))}
+ const ex=data.list.find(r=>r.d===h);if(ex)ex.e=e;else data.list.push({d:h,e});$('ndev').value='';$('nmemo').value='';await save(fmtD(h)+' '+e+'까지')};
+$('savetok').onclick=()=>{tok=$('tok').value.trim();if(!tok){msg('열쇠를 붙여넣어 주세요','bad');return}ls.set('ghtok',tok);$('setup').hidden=true;$('main').hidden=false;load()};
+$('reload').onclick=load;$('logout').onclick=()=>{if(confirm('이 휴대폰에서 열쇠를 지울까요?')){ls.set('ghtok','');location.reload()}};
+if(tok){$('main').hidden=false;load()}else $('setup').hidden=false;
+</script></body></html>
