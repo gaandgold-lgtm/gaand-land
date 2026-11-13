@@ -13,6 +13,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.CallLog;
+import android.service.notification.StatusBarNotification;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import android.telephony.SmsManager;
 import java.util.ArrayList;
 
@@ -30,6 +34,37 @@ public class Core {
         return p(c).getString("m_" + key(k), d);
     }
     static boolean on(Context c, int k) { return p(c).getBoolean("on_" + key(k), true); }
+
+    static void log(Context c, String s) {
+        String t = new SimpleDateFormat("M/d HH:mm:ss", Locale.KOREA).format(new Date());
+        String old = p(c).getString("log", "");
+        String n = t + "  " + s + "\n" + old;
+        if (n.length() > 1500) n = n.substring(0, 1500);
+        p(c).edit().putString("log", n).apply();
+    }
+
+    static String diag(Context c, int nid) {
+        StringBuilder s = new StringBuilder();
+        try {
+            NotificationManager nm = c.getSystemService(NotificationManager.class);
+            s.append(nm.areNotificationsEnabled() ? "✓ 앱 알림 허용됨\n" : "✗ 앱 알림이 꺼져 있어요 → [알림 설정 열기]\n");
+            NotificationChannel ch = nm.getNotificationChannel(CH);
+            if (ch == null) s.append("✗ 알림 종류가 없어요\n");
+            else if (ch.getImportance() < NotificationManager.IMPORTANCE_DEFAULT) s.append("✗ '명함 문자 확인' 알림이 꺼짐/조용히로 돼 있어요 → [알림 설정 열기]\n");
+            else if (ch.getImportance() < NotificationManager.IMPORTANCE_HIGH) s.append("△ 팝업 없이 알림창에만 와요 → [알림 설정 열기]에서 '팝업'으로\n");
+            else s.append("✓ '명함 문자 확인' 알림 팝업 켜짐\n");
+            if (nid != 0) {
+                boolean on = false;
+                for (StatusBarNotification sb : nm.getActiveNotifications()) if (sb.getId() == nid) on = true;
+                s.append(on ? "✓ 테스트 알림이 올라갔어요 (화면 맨 위를 아래로 쓸어내려 보세요)\n" : "✗ 테스트 알림이 올라가지 않았어요\n");
+            }
+        } catch (Exception e) {
+            s.append("오류: ").append(e.toString()).append("\n");
+        }
+        String err = p(c).getString("err", "");
+        if (err.length() > 0) s.append("마지막 오류: ").append(err).append("\n");
+        return s.toString();
+    }
 
     static void channel(Context c) {
         NotificationManager nm = c.getSystemService(NotificationManager.class);
@@ -75,19 +110,30 @@ public class Core {
             else if (type == CallLog.Calls.OUTGOING_TYPE) { if (dur <= 0) return; k = 1; }
             else if (type == CallLog.Calls.MISSED_TYPE || type == 5) k = 2;
             else return;
-            if (!on(c, k)) return;
-            if (!num.startsWith("01") || num.length() < 10) return;
+            if (!on(c, k)) { log(c, label(k) + " → 꺼져 있어 건너뜀"); return; }
+            if (!num.startsWith("01") || num.length() < 10) { log(c, label(k) + " " + num + " → 휴대폰 번호 아님, 건너뜀"); return; }
             if (sp.getBoolean("once", true)
-                    && System.currentTimeMillis() - sp.getLong("sent_" + num, 0) < 24 * 3600 * 1000L) return;
+                    && System.currentTimeMillis() - sp.getLong("sent_" + num, 0) < 24 * 3600 * 1000L) { log(c, fmt(num) + " → 오늘 이미 보냄, 건너뜀"); return; }
             ask(c, num, name, k, (int) (id % 100000) + 1);
         } catch (Exception e) {
-            // ignore
+            log(c, "통화 확인 오류: " + e);
         } finally {
             if (cur != null) cur.close();
         }
     }
 
     static void ask(Context c, String num, String name, int k, int nid) {
+        try {
+            askInner(c, num, name, k, nid);
+            log(c, label(k) + " " + fmt(num) + " → 알림 띄움");
+        } catch (Exception e) {
+            p(c).edit().putString("err", e.toString()).apply();
+            log(c, "알림 실패: " + e);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    static void askInner(Context c, String num, String name, int k, int nid) {
         channel(c);
         String who = (name != null && name.length() > 0 ? name + " · " : "") + fmt(num);
         int fl = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
@@ -106,6 +152,9 @@ public class Core {
                 .setStyle(new Notification.BigTextStyle().bigText(who + "\n\n" + msg(c, k)))
                 .setColor(0xFF4A2F6B)
                 .setCategory(Notification.CATEGORY_MESSAGE)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setShowWhen(true)
                 .setAutoCancel(true)
                 .setContentIntent(pe)
                 .addAction(new Notification.Action.Builder(null, "보내기", ps).build())
@@ -123,8 +172,11 @@ public class Core {
             ArrayList<String> parts = sm.divideMessage(text);
             sm.sendMultipartTextMessage(num, null, parts, null, null);
             p(c).edit().putLong("sent_" + num, System.currentTimeMillis()).apply();
+            log(c, fmt(num) + " → 문자 보냄 ✓");
             return true;
         } catch (Exception e) {
+            p(c).edit().putString("err", e.toString()).apply();
+            log(c, "문자 실패: " + e);
             return false;
         }
     }

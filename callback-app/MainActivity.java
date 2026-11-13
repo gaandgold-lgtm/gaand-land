@@ -10,6 +10,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.text.InputType;
@@ -31,6 +33,8 @@ public class MainActivity extends Activity {
     Switch once;
     TextView st;
     EditText test;
+    TextView diag;
+    TextView logv;
 
     int dp(int v) { return (int) (v * getResources().getDisplayMetrics().density); }
 
@@ -90,6 +94,7 @@ public class MainActivity extends Activity {
         sv.addView(l);
 
         l.addView(tv("가앤 명함문자", 26, true, PURPLE));
+        try { l.addView(tv("버전 " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName, 13, false, 0xFF888888)); } catch (Exception e) { }
         l.addView(tv("통화가 끝나면 '명함 문자 보낼까요?' 알림이 떠요.\n[보내기]를 누를 때만 문자가 갑니다.", 17, false, 0xFF333333));
         st = tv("", 17, true, 0xFFB00020);
         l.addView(st);
@@ -127,9 +132,17 @@ public class MainActivity extends Activity {
             String n = Core.clean(test.getText().toString());
             if (n.length() < 10) { toast("번호를 적어주세요"); return; }
             if (!allOk()) { toast("먼저 ① 권한 허용하기를 눌러주세요"); return; }
+            Core.p(this).edit().remove("err").apply();
             Core.ask(this, n, "테스트", 0, 99999);
-            toast("화면 위 알림을 확인하세요");
+            diag.setText("확인 중…");
+            new Handler(Looper.getMainLooper()).postDelayed(() -> { diag.setText(Core.diag(this, 99999)); showLog(); }, 900);
         }));
+        diag = tv("", 16, true, 0xFF333333);
+        l.addView(diag);
+        l.addView(btn("알림 설정 열기", false, v -> openNoti()));
+        l.addView(tv("\n최근 기록 (통화 후 무슨 일이 있었는지)", 17, true, PURPLE));
+        logv = tv("", 14, false, 0xFF444444);
+        l.addView(logv);
         setContentView(sv);
     }
 
@@ -168,6 +181,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    void openNoti() {
+        try {
+            startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName()));
+        } catch (Exception e) {
+            startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
+        }
+    }
+
+    void showLog() {
+        String s = Core.p(this).getString("log", "");
+        logv.setText(s.length() == 0 ? "아직 기록이 없어요. 전화를 한 통 해보세요." : s);
+    }
+
     void save() {
         SharedPreferences.Editor e = Core.p(this).edit();
         for (int k = 0; k < 3; k++) {
@@ -201,7 +227,7 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() { super.onResume(); refresh(); }
+    protected void onResume() { super.onResume(); refresh(); showLog(); if (diag != null && diag.getText().length() > 0) diag.setText(Core.diag(this, 0)); }
 
     @Override
     protected void onPause() { super.onPause(); save(); }
