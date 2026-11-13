@@ -158,7 +158,14 @@ public class Core {
         int fl = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
         Intent s = new Intent(c, ActionReceiver.class).setAction("SEND")
                 .putExtra("num", num).putExtra("kind", k).putExtra("nid", nid);
-        PendingIntent ps = PendingIntent.getBroadcast(c, nid * 3, s, fl);
+        PendingIntent ps;
+        if (p(c).getBoolean("viaApp", true)) {
+            Intent sa = new Intent(c, SendActivity.class).putExtra("num", num).putExtra("kind", k).putExtra("nid", nid)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+            ps = PendingIntent.getActivity(c, nid * 3, sa, fl);
+        } else {
+            ps = PendingIntent.getBroadcast(c, nid * 3, s, fl);
+        }
         Intent x = new Intent(c, ActionReceiver.class).setAction("SKIP").putExtra("nid", nid);
         PendingIntent px = PendingIntent.getBroadcast(c, nid * 3 + 1, x, fl);
         Intent e = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + num))
@@ -183,13 +190,38 @@ public class Core {
         c.getSystemService(NotificationManager.class).notify(nid, n);
     }
 
+    static java.util.List<String> chunks(String text) {
+        java.util.List<String> out = new ArrayList<>();
+        StringBuilder cur = new StringBuilder();
+        for (String line : text.split("\n")) {
+            boolean url = line.matches(".*([a-zA-Z0-9-]+\\.)+(kr|com|net|co|me|io|site|shop)(/\\S*)?.*");
+            if (url) {
+                if (cur.length() > 0) { out.add(cur.toString()); cur.setLength(0); }
+                out.add(line.trim());
+                continue;
+            }
+            if (cur.length() > 0 && cur.length() + 1 + line.length() > 66) { out.add(cur.toString()); cur.setLength(0); }
+            if (line.length() > 66) {
+                for (int i = 0; i < line.length(); i += 66) out.add(line.substring(i, Math.min(line.length(), i + 66)));
+                continue;
+            }
+            if (cur.length() > 0) cur.append("\n");
+            cur.append(line);
+        }
+        if (cur.length() > 0) out.add(cur.toString());
+        return out;
+    }
+
     static boolean send(Context c, String num, String text) {
         try {
             SmsManager sm = null;
             if (Build.VERSION.SDK_INT >= 31) sm = c.getSystemService(SmsManager.class);
             if (sm == null) sm = SmsManager.getDefault();
-            ArrayList<String> parts = sm.divideMessage(text);
-            sm.sendMultipartTextMessage(num, null, parts, null, null);
+            for (String part : chunks(text)) {
+                if (part.trim().length() == 0) continue;
+                sm.sendTextMessage(num, null, part, null, null);
+                try { Thread.sleep(1500); } catch (InterruptedException ie) { }
+            }
             p(c).edit().putLong("sent_" + num, System.currentTimeMillis()).apply();
             log(c, fmt(num) + " → 문자 보냄 ✓");
             return true;

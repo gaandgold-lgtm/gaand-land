@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
     EditText[] ed = new EditText[3];
     Switch[] sw = new Switch[3];
     Switch once;
+    Switch viaApp;
     TextView st;
     EditText test;
     TextView diag;
@@ -149,6 +150,12 @@ public class MainActivity extends Activity {
         once.setTextSize(17);
         once.setChecked(Core.p(this).getBoolean("once", true));
         l.addView(once);
+        viaApp = new Switch(this);
+        viaApp.setText("문자 앱에서 확인하고 보내기 (추천: 한 통으로 가고 링크 미리보기 그림이 떠요)");
+        viaApp.setTextSize(16);
+        viaApp.setChecked(Core.p(this).getBoolean("viaApp", true));
+        l.addView(viaApp);
+        l.addView(tv("끄면 [보내기] 한 번에 바로 가지만, 짧은 문자 여러 통으로 나눠서 가요.", 14, false, 0xFF666666));
         l.addView(btn("저장하기", true, v -> { save(); toast("저장했어요"); }));
         l.addView(btn("문구 처음 상태로 되돌리기", false, v -> reset()));
 
@@ -176,6 +183,11 @@ public class MainActivity extends Activity {
         l.addView(tv("\n최근 기록 (통화 후 무슨 일이 있었는지)", 17, true, PURPLE));
         logv = tv("", 14, false, 0xFF444444);
         l.addView(logv);
+        if (License.need(this)) {
+            TextView mk = tv("\nGA& 가앤이 만든 앱 · 문의 010-8186-8816", 14, true, PURPLE);
+            mk.setGravity(Gravity.CENTER);
+            l.addView(mk);
+        }
         setContentView(sv);
         handleLink(getIntent());
     }
@@ -259,6 +271,7 @@ public class MainActivity extends Activity {
             e.putString("m_" + Core.key(k), ed[k].getText().toString().trim());
         }
         e.putBoolean("once", once.isChecked());
+        e.putBoolean("viaApp", viaApp.isChecked());
         if (License.need(this)) for (int i = 0; i < 4; i++) e.putString(INFO_KEY[i], info[i].getText().toString().trim());
         e.apply();
     }
