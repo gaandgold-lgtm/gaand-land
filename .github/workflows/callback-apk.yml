@@ -26,7 +26,8 @@ jobs:
           mkdir -p $P/app/src/main/java/kr/gaand/callback $P/app/src/main/res/drawable
           cp callback-app/*.java $P/app/src/main/java/kr/gaand/callback/
           cp callback-app/AndroidManifest.xml $P/app/src/main/
-          cp callback-app/ic_launcher.xml $P/app/src/main/res/drawable/
+          cp callback-app/ic_*.xml $P/app/src/main/res/drawable/
+          cp callback-app/gaand.jks $P/app/gaand.jks
           cat > $P/settings.gradle <<'X'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
           dependencyResolutionManagement { repositories { google(); mavenCentral() } }
@@ -54,6 +55,17 @@ jobs:
             compileOptions {
               sourceCompatibility JavaVersion.VERSION_17
               targetCompatibility JavaVersion.VERSION_17
+            }
+            signingConfigs {
+              gaand {
+                storeFile file('gaand.jks')
+                storePassword 'gaand1234'
+                keyAlias 'gaand'
+                keyPassword 'gaand1234'
+              }
+            }
+            buildTypes {
+              debug { signingConfig signingConfigs.gaand }
             }
             lint { abortOnError false; checkReleaseBuilds false }
           }
