@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">가앤 명함문자</string>
+    <color name="brand">#4A2F6B</color>
+    <string name="d_in">안녕하세요, 가앤부동산공인중개사사무소 가현지입니다.\n연락 주셔서 감사합니다. 명함 보내드려요.\nland.gaandgold.co.kr/card.html\n궁금하신 점은 언제든 편하게 연락 주세요.</string>
+    <string name="d_out">안녕하세요, 방금 통화드린 가앤부동산공인중개사사무소 가현지입니다.\n명함 남겨드려요. 번호 저장해 두시면 편하세요.\nland.gaandgold.co.kr/card.html</string>
+    <string name="d_miss">안녕하세요, 가앤부동산공인중개사사무소 가현지입니다.\n지금 상담 중이라 전화를 못 받았어요. 확인하는 대로 바로 연락드릴게요.\n집을 내놓으실 거면 아래 링크로 1분이면 접수돼요.\nland.gaandgold.co.kr/sell.html</string>
+</resources>
