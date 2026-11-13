@@ -290,7 +290,7 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onResume() { super.onResume(); refresh(); showLog(); if (diag != null && diag.getText().length() > 0) diag.setText(Core.diag(this, 0)); }
+    protected void onResume() { super.onResume(); refresh(); showLog(); recheck(false); if (diag != null && diag.getText().length() > 0) diag.setText(Core.diag(this, 0)); }
 
     @Override
     protected void onPause() { super.onPause(); save(); }

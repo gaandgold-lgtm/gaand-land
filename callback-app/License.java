@@ -16,7 +16,28 @@ import org.json.JSONObject;
 
 /** 사용 기간: 사장님이 관리 페이지에서 정한 목록(lic.json)을 앱이 읽어서 확인 */
 public class License {
+    static final String URL_API = "https://api.github.com/repos/gaandgold-lgtm/gaand-land/contents/lic.json";
     static final String URL_LIST = "https://raw.githubusercontent.com/gaandgold-lgtm/gaand-land/main/lic.json";
+
+    static String get(String u, boolean api) throws Exception {
+        HttpURLConnection con = (HttpURLConnection) new URL(u).openConnection();
+        try {
+            con.setConnectTimeout(8000);
+            con.setReadTimeout(8000);
+            con.setUseCaches(false);
+            con.setRequestProperty("Cache-Control", "no-cache");
+            if (api) con.setRequestProperty("Accept", "application/vnd.github.raw");
+            if (con.getResponseCode() != 200) throw new Exception("http " + con.getResponseCode());
+            InputStream in = con.getInputStream();
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            int n;
+            while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
+            return bo.toString("UTF-8");
+        } finally {
+            con.disconnect();
+        }
+    }
 
     static boolean need(Context c) { return c.getResources().getBoolean(R.bool.need_license); }
 
@@ -64,19 +85,11 @@ public class License {
     /** 네트워크에서 목록을 받아 이 기기의 만료일을 저장. 실패하면 예전 값 유지. */
     static synchronized boolean refresh(Context c) {
         if (!need(c)) return true;
-        HttpURLConnection con = null;
         try {
-            con = (HttpURLConnection) new URL(URL_LIST + "?t=" + System.currentTimeMillis()).openConnection();
-            con.setConnectTimeout(8000);
-            con.setReadTimeout(8000);
-            con.setUseCaches(false);
-            if (con.getResponseCode() != 200) return false;
-            InputStream in = con.getInputStream();
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            byte[] buf = new byte[4096];
-            int n;
-            while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
-            JSONObject o = new JSONObject(bo.toString("UTF-8"));
+            String body;
+            try { body = get(URL_API + "?t=" + System.currentTimeMillis(), true); }
+            catch (Exception ex) { body = get(URL_LIST + "?t=" + System.currentTimeMillis(), false); }
+            JSONObject o = new JSONObject(body);
             JSONArray a = o.getJSONArray("list");
             String me = devHex(c);
             long exp = -1;
@@ -89,8 +102,6 @@ public class License {
             return true;
         } catch (Exception e) {
             return false;
-        } finally {
-            if (con != null) con.disconnect();
         }
     }
 
