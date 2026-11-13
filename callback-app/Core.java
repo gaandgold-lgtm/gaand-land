@@ -106,7 +106,8 @@ public class Core {
 
     static synchronized void check(Context c) {
         if (c.checkSelfPermission(Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) return;
-        if (!License.ok(c)) { log(c, "사용 기간이 끝나 알림을 띄우지 않았어요"); return; }
+        License.refreshIfOld(c);
+        if (!License.ok(c)) { log(c, "사용 기간이 아니라 알림을 띄우지 않았어요"); return; }
         Cursor cur = null;
         try {
             cur = c.getContentResolver().query(CallLog.Calls.CONTENT_URI,

@@ -1,22 +1,22 @@
 package kr.gaand.callback;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
-import android.util.Base64;
 import java.io.ByteArrayOutputStream;
-import java.security.KeyFactory;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+/** 사용 기간: 사장님이 관리 페이지에서 정한 목록(lic.json)을 앱이 읽어서 확인 */
 public class License {
-    static final String PUB = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEVrKwfSBMLCoz8odds0Fbh9+hvNeqITnlxNr+GEw/rZ4Y52GafTqSNx9TC81bMjW2FV76Z7FN4Lgbg5K/vFa/mg==";
-    static final int TRIAL_DAYS = 7;
+    static final String URL_LIST = "https://raw.githubusercontent.com/gaandgold-lgtm/gaand-land/main/lic.json";
 
     static boolean need(Context c) { return c.getResources().getBoolean(R.bool.need_license); }
 
@@ -30,15 +30,17 @@ public class License {
         }
     }
 
-    static String devCode(Context c) {
+    static String devHex(Context c) {
         byte[] d = dev(c);
-        String s = String.format("%02X%02X%02X%02X", d[0], d[1], d[2], d[3]);
+        return String.format("%02X%02X%02X%02X", d[0], d[1], d[2], d[3]);
+    }
+
+    static String devCode(Context c) {
+        String s = devHex(c);
         return s.substring(0, 4) + "-" + s.substring(4);
     }
 
     static long epochDay(long ms) { return Math.floorDiv(ms + 9 * 3600 * 1000L, 86400000L); }
-
-    static final long BASE = 20454; // 2026-01-01 as days since 1970-01-01
 
     static String dayStr(long epochDay) {
         SimpleDateFormat f = new SimpleDateFormat("yyyy년 M월 d일", Locale.KOREA);
@@ -46,82 +48,72 @@ public class License {
         return f.format(epochDay * 86400000L);
     }
 
-    static byte[] p1363ToDer(byte[] rs) {
-        ByteArrayOutputStream o = new ByteArrayOutputStream();
-        byte[] r = intDer(rs, 0), s = intDer(rs, 32);
-        o.write(0x30);
-        o.write(r.length + s.length);
-        o.write(r, 0, r.length);
-        o.write(s, 0, s.length);
-        return o.toByteArray();
-    }
-
-    static byte[] intDer(byte[] a, int off) {
-        int i = off, end = off + 32;
-        while (i < end - 1 && a[i] == 0) i++;
-        boolean pad = (a[i] & 0x80) != 0;
-        int len = end - i + (pad ? 1 : 0);
-        byte[] out = new byte[len + 2];
-        out[0] = 0x02;
-        out[1] = (byte) len;
-        int p = 2;
-        if (pad) out[p++] = 0;
-        System.arraycopy(a, i, out, p, end - i);
-        return out;
-    }
-
-    /** returns expiry epochDay if valid for this device, else -1 */
-    static long check(Context c, String code) {
+    static long parseDay(String s) {
         try {
-            java.util.regex.Matcher mt = java.util.regex.Pattern.compile("[A-Za-z0-9_-]{94}").matcher(code.replaceAll("\\s", ""));
-            if (!mt.find()) return -1;
-            String t = mt.group();
-            byte[] b = Base64.decode(t, Base64.URL_SAFE | Base64.NO_PADDING | Base64.NO_WRAP);
-            if (b.length != 70) return -1;
-            byte[] d = dev(c);
-            for (int i = 0; i < 4; i++) if (b[i] != d[i]) return -1;
-            byte[] msg = new byte[6];
-            System.arraycopy(b, 0, msg, 0, 6);
-            byte[] sig = new byte[64];
-            System.arraycopy(b, 6, sig, 0, 64);
-            PublicKey pk = KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.decode(PUB, Base64.DEFAULT)));
-            Signature v = Signature.getInstance("SHA256withECDSA");
-            v.initVerify(pk);
-            v.update(msg);
-            if (!v.verify(p1363ToDer(sig))) return -1;
-            int days = ((b[4] & 0xFF) << 8) | (b[5] & 0xFF);
-            return BASE + days;
+            String[] p = s.trim().replaceAll("[^0-9]+", "-").replaceAll("^-|-$", "").split("-");
+            int y = Integer.parseInt(p[0]), m = Integer.parseInt(p[1]), d = Integer.parseInt(p[2]);
+            java.util.Calendar cal = java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            cal.clear();
+            cal.set(y, m - 1, d);
+            return Math.floorDiv(cal.getTimeInMillis(), 86400000L);
         } catch (Exception e) {
             return -1;
         }
     }
 
-    static long trialLeft(Context c) {
-        long first;
-        try { first = c.getPackageManager().getPackageInfo(c.getPackageName(), 0).firstInstallTime; }
-        catch (Exception e) { first = System.currentTimeMillis(); }
-        long used = epochDay(System.currentTimeMillis()) - epochDay(first);
-        return TRIAL_DAYS - used;
+    /** 네트워크에서 목록을 받아 이 기기의 만료일을 저장. 실패하면 예전 값 유지. */
+    static synchronized boolean refresh(Context c) {
+        if (!need(c)) return true;
+        HttpURLConnection con = null;
+        try {
+            con = (HttpURLConnection) new URL(URL_LIST + "?t=" + System.currentTimeMillis()).openConnection();
+            con.setConnectTimeout(8000);
+            con.setReadTimeout(8000);
+            con.setUseCaches(false);
+            if (con.getResponseCode() != 200) return false;
+            InputStream in = con.getInputStream();
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            int n;
+            while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
+            JSONObject o = new JSONObject(bo.toString("UTF-8"));
+            JSONArray a = o.getJSONArray("list");
+            String me = devHex(c);
+            long exp = -1;
+            for (int i = 0; i < a.length(); i++) {
+                JSONObject r = a.getJSONObject(i);
+                String d = r.optString("d", "").toUpperCase(Locale.ROOT).replaceAll("[^0-9A-F]", "");
+                if (d.equals(me)) exp = Math.max(exp, parseDay(r.optString("e", "")));
+            }
+            Core.p(c).edit().putLong("licExp", exp).putLong("licChecked", System.currentTimeMillis()).putBoolean("licListed", exp >= 0).apply();
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (con != null) con.disconnect();
+        }
     }
 
-    static long expiry(Context c) {
-        String code = Core.p(c).getString("lic", "");
-        return code.length() == 0 ? -1 : check(c, code);
+    /** 3시간 넘게 확인 안 했으면 다시 확인 (백그라운드 스레드에서 호출) */
+    static void refreshIfOld(Context c) {
+        if (!need(c)) return;
+        long last = Core.p(c).getLong("licChecked", 0);
+        if (System.currentTimeMillis() - last > 3 * 3600 * 1000L) refresh(c);
     }
 
     static boolean ok(Context c) {
         if (!need(c)) return true;
-        long today = epochDay(System.currentTimeMillis());
-        if (expiry(c) >= today) return true;
-        return trialLeft(c) > 0;
+        SharedPreferences sp = Core.p(c);
+        return sp.getLong("licExp", -1) >= epochDay(System.currentTimeMillis());
     }
 
     static String status(Context c) {
+        SharedPreferences sp = Core.p(c);
+        if (sp.getLong("licChecked", 0) == 0) return "사용 기간 확인 중… (인터넷 연결이 필요해요)";
+        long ex = sp.getLong("licExp", -1);
         long today = epochDay(System.currentTimeMillis());
-        long ex = expiry(c);
-        if (ex >= today) return "✓ 사용 기간: " + dayStr(ex) + "까지";
-        long t = trialLeft(c);
-        if (t > 0) return "무료 체험 " + t + "일 남았어요";
-        return ex >= 0 ? "사용 기간이 끝났어요 (" + dayStr(ex) + "). 사용 코드를 새로 받아주세요." : "무료 체험이 끝났어요. 사용 코드를 받아 넣어주세요.";
+        if (ex >= today) return ex > today + 365 * 50 ? "✓ 사용 중 (기간 제한 없음)" : "✓ 사용 기간: " + dayStr(ex) + "까지";
+        if (ex >= 0) return "사용 기간이 끝났어요 (" + dayStr(ex) + "). 아래 [구매 문의 문자 보내기]를 눌러주세요.";
+        return "아직 등록되지 않은 기기예요. 아래 [구매 문의 문자 보내기]로 기기번호를 보내주세요.";
     }
 }

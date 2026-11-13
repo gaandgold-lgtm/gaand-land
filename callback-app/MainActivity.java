@@ -114,13 +114,10 @@ public class MainActivity extends Activity {
             l.addView(lic);
             l.addView(tv("내 기기번호: " + License.devCode(this), 18, true, 0xFF111111));
             l.addView(btn("구매 문의 문자 보내기", false, v -> buy()));
-            code = new EditText(this);
-            code.setHint("받은 사용 코드 붙여넣기");
-            code.setTextSize(15);
-            code.setMaxLines(4);
-            l.addView(code);
-            l.addView(btn("사용 코드 등록", true, v -> activate(code.getText().toString())));
+            l.addView(btn("사용 기간 다시 확인", false, v -> recheck(true)));
 
+        }
+        if (getPackageName().endsWith("callcard")) {
             l.addView(tv("\n내 정보 (문자에 자동으로 들어가요)", 19, true, PURPLE));
             for (int i = 0; i < 4; i++) {
                 info[i] = new EditText(this);
@@ -171,7 +168,7 @@ public class MainActivity extends Activity {
             String n = Core.clean(test.getText().toString());
             if (n.length() < 10) { toast("번호를 적어주세요"); return; }
             if (!allOk()) { toast("먼저 ① 권한 허용하기를 눌러주세요"); return; }
-            if (!License.ok(this)) { toast("사용 기간이 끝났어요. 사용 코드를 넣어주세요"); return; }
+            if (!License.ok(this)) { toast("사용 기간이 아니에요. 위 [사용 기간] 안내를 봐주세요"); return; }
             Core.p(this).edit().remove("err").apply();
             Core.ask(this, n, "테스트", 0, 99999);
             diag.setText("확인 중…");
@@ -183,35 +180,26 @@ public class MainActivity extends Activity {
         l.addView(tv("\n최근 기록 (통화 후 무슨 일이 있었는지)", 17, true, PURPLE));
         logv = tv("", 14, false, 0xFF444444);
         l.addView(logv);
-        if (License.need(this)) {
+        if (getPackageName().endsWith("callcard")) {
             TextView mk = tv("\nGA& 가앤이 만든 앱 · 문의 010-8186-8816", 14, true, PURPLE);
             mk.setGravity(Gravity.CENTER);
             l.addView(mk);
         }
         setContentView(sv);
-        handleLink(getIntent());
+        recheck(false);
     }
 
-    @Override
-    protected void onNewIntent(Intent i) { super.onNewIntent(i); handleLink(i); }
-
-    void handleLink(Intent i) {
-        if (i == null || i.getData() == null || !License.need(this)) return;
-        String c = i.getData().getQueryParameter("c");
-        if (c != null) activate(c);
-    }
-
-    void activate(String c) {
-        long ex = License.check(this, c);
-        if (ex < 0) { toast("코드가 맞지 않아요. 기기번호를 다시 확인해 주세요"); return; }
-        Core.p(this).edit().putString("lic", c.trim()).apply();
-        if (code != null) code.setText("");
-        refresh();
-        toast("등록됐어요! " + License.dayStr(ex) + "까지 사용할 수 있어요");
+    void recheck(boolean show) {
+        if (!License.need(this)) return;
+        if (lic != null && show) lic.setText("확인 중…");
+        new Thread(() -> {
+            boolean ok = License.refresh(getApplicationContext());
+            runOnUiThread(() -> { refresh(); if (show) toast(ok ? "확인했어요" : "인터넷 연결을 확인해 주세요"); });
+        }).start();
     }
 
     void buy() {
-        String body = getString(R.string.app_name) + " 사용 코드 구매 문의\n기기번호: " + License.devCode(this);
+        String body = getString(R.string.app_name) + " 사용 신청\n기기번호: " + License.devCode(this);
         Intent i = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + getString(R.string.seller_phone))).putExtra("sms_body", body);
         try { startActivity(i); } catch (Exception e) { toast("문자 앱을 열 수 없어요"); }
     }
@@ -272,7 +260,7 @@ public class MainActivity extends Activity {
         }
         e.putBoolean("once", once.isChecked());
         e.putBoolean("viaApp", viaApp.isChecked());
-        if (License.need(this)) for (int i = 0; i < 4; i++) e.putString(INFO_KEY[i], info[i].getText().toString().trim());
+        if (info[0] != null) for (int i = 0; i < 4; i++) e.putString(INFO_KEY[i], info[i].getText().toString().trim());
         e.apply();
     }
 
