@@ -28,6 +28,11 @@ jobs:
           cp callback-app/AndroidManifest.xml $P/app/src/main/
           cp callback-app/ic_*.xml $P/app/src/main/res/drawable/
           cp callback-app/gaand.jks $P/app/gaand.jks
+          for B in gaand victory; do
+            mkdir -p $P/app/src/$B/res/values $P/app/src/$B/res/drawable
+            cp callback-app/$B/strings.xml $P/app/src/$B/res/values/strings.xml
+            cp callback-app/$B/ic_launcher.xml $P/app/src/$B/res/drawable/ic_launcher.xml
+          done
           cat > $P/settings.gradle <<'X'
           pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
           dependencyResolutionManagement { repositories { google(); mavenCentral() } }
@@ -46,7 +51,6 @@ jobs:
             namespace 'kr.gaand.callback'
             compileSdk 34
             defaultConfig {
-              applicationId 'kr.gaand.callback'
               minSdk 26
               targetSdk 34
               versionCode ${{ github.run_number }}
@@ -64,6 +68,11 @@ jobs:
                 keyPassword 'gaand1234'
               }
             }
+            flavorDimensions 'brand'
+            productFlavors {
+              gaand { dimension 'brand'; applicationId 'kr.gaand.callback' }
+              victory { dimension 'brand'; applicationId 'kr.victorygift.callback' }
+            }
             buildTypes {
               debug { signingConfig signingConfigs.gaand }
             }
@@ -76,6 +85,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp build/proj/app/build/outputs/apk/debug/app-debug.apk gaand-callback.apk
+          cp build/proj/app/build/outputs/apk/gaand/debug/app-gaand-debug.apk gaand-callback.apk
+          cp build/proj/app/build/outputs/apk/victory/debug/app-victory-debug.apk victory-callback.apk
           gh release delete callback-app --yes --cleanup-tag || true
-          gh release create callback-app gaand-callback.apk --title "가앤 명함문자 앱" --notes "통화가 끝나면 묻고, 승인하면 명함 문자를 보내는 앱"
+          gh release create callback-app gaand-callback.apk victory-callback.apk --title "가앤 명함문자 앱" --notes "통화가 끝나면 묻고, 승인하면 명함 문자를 보내는 앱"
