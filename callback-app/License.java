@@ -94,11 +94,11 @@ public class License {
         }
     }
 
-    /** 3시간 넘게 확인 안 했으면 다시 확인 (백그라운드 스레드에서 호출) */
+    /** 15분 넘게 확인 안 했으면 다시 확인 (백그라운드 스레드에서 호출) */
     static void refreshIfOld(Context c) {
         if (!need(c)) return;
         long last = Core.p(c).getLong("licChecked", 0);
-        if (System.currentTimeMillis() - last > 3 * 3600 * 1000L) refresh(c);
+        if (System.currentTimeMillis() - last > 15 * 60 * 1000L) refresh(c);
     }
 
     static boolean ok(Context c) {
