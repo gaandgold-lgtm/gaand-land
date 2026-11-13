@@ -52,7 +52,7 @@ footer{font-size:14px}
 <main class="wrap">
   <div class="hero">
     <h1>집 내놓기</h1>
-    <p>전화 한 통, 또는 아래 버튼 3번이면 끝나요.</p>
+    <p>전화 한 통이면 끝나요. 문자로 하실 분은 아래 1·2·3만 하시면 돼요.</p>
   </div>
 
   <div class="notice" id="inapp" hidden>
@@ -81,23 +81,16 @@ footer{font-size:14px}
     <input id="addr" type="text" placeholder="예) 파크메종 101동 1203호" autocomplete="street-address">
     <p class="hint">아파트 이름이나 주소만 적어도 돼요.</p>
     <p class="err" id="err2" role="alert"></p>
-    <button type="button" class="big" id="next2">다음</button>
+    <button type="button" class="big" id="next2">다음 (3번으로) ▼</button>
   </section>
 
   <section class="step dim" id="s3" aria-labelledby="q3">
     <p class="q" id="q3"><label for="price" style="display:flex;align-items:center"><span class="num">3</span>원하시는 가격은요?</label></p>
     <input id="price" type="text" placeholder="예) 3억 5천 / 보증금 1000에 월 60">
-    <button type="button" class="skip" id="noprice">잘 모르겠어요 (상담 후 결정)</button>
-    <button type="button" class="big" id="next3">다음</button>
-  </section>
-
-  <section class="step dim" id="s4" aria-labelledby="q4">
-    <p class="q" id="q4"><span class="num">✓</span>이대로 보내드릴게요</p>
-    <pre id="preview"></pre>
-    <p class="hint">보내시는 휴대폰 번호로 연락드려요. 연락처는 따로 안 적으셔도 돼요.</p>
-    <a class="big" id="send" href="sms:01081868816">📩 문자 보내기</a>
-    <button type="button" class="big sub" id="copy">내용 복사하기</button>
-    <p class="hint">문자 앱이 열리면 <b>보내기(▶)</b>만 누르시면 끝이에요.</p>
+    <p class="hint">모르시면 비워두셔도 돼요.</p>
+    <a class="big sendlink" id="send" href="sms:01081868816">📩 문자 보내기</a>
+    <p class="hint">누르면 문자 앱이 열려요. <b>보내기(▶)</b>만 누르시면 끝!</p>
+    <button type="button" class="skip" id="copy">문자 앱이 안 열리면 → 내용 복사하기</button>
   </section>
 
   <section>
@@ -118,26 +111,29 @@ footer{font-size:14px}
 var ua=navigator.userAgent||'',isIOS=/iPhone|iPad|iPod/.test(ua);
 var inApp=/Instagram|FBAN|FBAV|KAKAOTALK|NAVER|Line\/|DaumApps|BAND/i.test(ua);
 if(inApp)document.getElementById('inapp').hidden=false;
-var data={deal:'',addr:'',price:''};
-function $(id){return document.getElementById(id)}
-function open(n){for(var i=1;i<=4;i++){var s=$('s'+i);s.classList.toggle('on',i===n);s.classList.toggle('dim',i>n)}
+var deal='';function $(id){return document.getElementById(id)}
+function text(){return '[가앤 집 내놓기]\n'+(deal||'(선택 안 함)')+'\n집: '+($('addr').value.trim()||'(안 적음)')+'\n희망가: '+($('price').value.trim()||'상담 후 결정')}
+function upd(){$('send').href='sms:01081868816'+(isIOS?'&':'?')+'body='+encodeURIComponent(text())}
+function open(n){for(var i=1;i<=3;i++){var s=$('s'+i);s.classList.toggle('on',i===n);s.classList.toggle('dim',i>n)}
   var t=$('s'+n);if(t.scrollIntoView)t.scrollIntoView({behavior:'smooth',block:'start'});
   var inp=t.querySelector('input');if(inp)setTimeout(function(){inp.focus()},350)}
 document.querySelectorAll('.choices button').forEach(function(b){b.addEventListener('click',function(){
   b.parentNode.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
-  data.deal=b.getAttribute('data-v');open(2)})});
-$('next2').addEventListener('click',function(){var v=$('addr').value.trim();
-  if(!data.deal){open(1);return}
-  if(!v){$('err2').textContent='집 이름이나 주소를 적어주세요';$('addr').focus();return}
-  $('err2').textContent='';data.addr=v;open(3)});
+  deal=b.getAttribute('data-v');upd();open(2)})});
+$('next2').addEventListener('click',function(){
+  if(!deal){open(1);return}
+  if(!$('addr').value.trim()){$('err2').textContent='집 이름이나 주소를 적어주세요';$('addr').focus();return}
+  $('err2').textContent='';upd();open(3)});
+$('addr').addEventListener('input',upd);$('price').addEventListener('input',upd);
 $('addr').addEventListener('keydown',function(e){if(e.key==='Enter')$('next2').click()});
-$('price').addEventListener('keydown',function(e){if(e.key==='Enter')$('next3').click()});
-function finish(p){data.price=p;var t='[가앤 집 내놓기]\n'+data.deal+'\n집: '+data.addr+'\n희망가: '+data.price;
-  $('preview').textContent=t;$('send').href='sms:01081868816'+(isIOS?'&':'?')+'body='+encodeURIComponent(t);open(4)}
-$('next3').addEventListener('click',function(){finish($('price').value.trim()||'상담 후 결정')});
-$('noprice').addEventListener('click',function(){$('price').value='';finish('상담 후 결정')});
-$('copy').addEventListener('click',function(){var t=$('preview').textContent,x=document.createElement('textarea');x.value=t;x.style.position='fixed';x.style.opacity='0';document.body.appendChild(x);x.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(x);
-  if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});this.textContent='✅ 복사됐어요 · 문자에 붙여넣어 010-8186-8816으로';});
+$('price').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('price').blur()}});
+$('send').addEventListener('click',function(e){
+  if(!deal){e.preventDefault();open(1);return}
+  if(!$('addr').value.trim()){e.preventDefault();open(2);$('err2').textContent='집 이름이나 주소를 적어주세요';return}
+  upd()},true);
+$('copy').addEventListener('click',function(){var t=text(),x=document.createElement('textarea');x.value=t;x.style.position='fixed';x.style.opacity='0';document.body.appendChild(x);x.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(x);
+  if(navigator.clipboard)navigator.clipboard.writeText(t).catch(function(){});this.textContent='✅ 복사됐어요 · 문자에 붙여넣어 010-8186-8816으로 보내주세요'});
+upd();
 })();
 </script>
 </body>
