@@ -1,0 +1,69 @@
+name: build-callback-apk
+on:
+  push:
+    paths:
+      - 'callback-app/**'
+      - '.github/workflows/callback-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Make project
+        run: |
+          set -e
+          P=build/proj
+          mkdir -p $P/app/src/main/java/kr/gaand/callback $P/app/src/main/res/drawable
+          cp callback-app/*.java $P/app/src/main/java/kr/gaand/callback/
+          cp callback-app/AndroidManifest.xml $P/app/src/main/
+          cp callback-app/ic_launcher.xml $P/app/src/main/res/drawable/
+          cat > $P/settings.gradle <<'X'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          rootProject.name = 'gaandcallback'
+          include ':app'
+          X
+          cat > $P/build.gradle <<'X'
+          plugins { id 'com.android.application' version '8.5.2' apply false }
+          X
+          cat > $P/gradle.properties <<'X'
+          org.gradle.jvmargs=-Xmx2g
+          X
+          cat > $P/app/build.gradle <<X
+          plugins { id 'com.android.application' }
+          android {
+            namespace 'kr.gaand.callback'
+            compileSdk 34
+            defaultConfig {
+              applicationId 'kr.gaand.callback'
+              minSdk 26
+              targetSdk 34
+              versionCode ${{ github.run_number }}
+              versionName '1.${{ github.run_number }}'
+            }
+            compileOptions {
+              sourceCompatibility JavaVersion.VERSION_17
+              targetCompatibility JavaVersion.VERSION_17
+            }
+            lint { abortOnError false; checkReleaseBuilds false }
+          }
+          X
+      - name: Build APK
+        run: cd build/proj && gradle assembleDebug --no-daemon --stacktrace
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build/proj/app/build/outputs/apk/debug/app-debug.apk gaand-callback.apk
+          gh release delete callback-app --yes --cleanup-tag || true
+          gh release create callback-app gaand-callback.apk --title "가앤 명함문자 앱" --notes "통화가 끝나면 묻고, 승인하면 명함 문자를 보내는 앱"
