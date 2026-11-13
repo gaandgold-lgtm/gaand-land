@@ -18,7 +18,7 @@ ol{padding-left:20px}li{margin:6px 0}
 #msg{position:sticky;top:0;z-index:2;font-weight:800;padding:8px 0;min-height:20px;background:var(--bg)}
 </style></head><body><div class="w">
 <h1>가앤 콜명함 사용기간 관리</h1>
-<p class="mut">기기번호마다 언제까지 쓸 수 있는지 정해요. 저장하면 5분 안에 반영되고, 앱은 열 때나 15분마다 확인해요.</p>
+<p class="mut">기기번호마다 언제까지 쓸 수 있는지 정해요. 저장하면 1~2분 안에 반영되고, 앱은 열 때나 15분마다 확인해요.</p>
 <div id="msg"></div>
 
 <div id="setup" class="card" hidden>
@@ -66,7 +66,7 @@ function kor(s){const d=parse(s);return d.getUTCFullYear()>=2090?'제한 없음'
 function b64e(s){return btoa(unescape(encodeURIComponent(s)))}function b64d(s){return decodeURIComponent(escape(atob(s.replace(/\n/g,''))))}
 async function gh(method,body){const r=await fetch(API+(method==='GET'?'?t='+Date.now():''),{method,headers:{'Authorization':'Bearer '+tok,'Accept':'application/vnd.github+json'},body:body?JSON.stringify(body):undefined});if(!r.ok)throw new Error(r.status===401?'열쇠(토큰)가 맞지 않아요':r.status===404?'파일을 찾을 수 없거나 권한이 없어요':r.status===409?'다른 곳에서 바뀌었어요. 새로고침 후 다시':'오류 '+r.status);return r.json()}
 async function load(){msg('불러오는 중…');try{const j=await gh('GET');sha=j.sha;data=JSON.parse(b64d(j.content));if(!data.list)data.list=[];render();msg('')}catch(e){msg(e.message,'bad');if(/열쇠/.test(e.message)){$('setup').hidden=false;$('main').hidden=true}}}
-async function save(note){msg('저장 중…');try{data.list.sort((a,b)=>a.d.localeCompare(b.d));const j=await gh('PUT',{message:'사용기간 변경: '+note,content:b64e(JSON.stringify(data)),sha});sha=j.content.sha;render();msg('✓ 저장했어요 ('+note+') · 5분 안에 반영돼요','ok')}catch(e){msg(e.message,'bad');await load()}}
+async function save(note){msg('저장 중…');try{data.list.sort((a,b)=>a.d.localeCompare(b.d));const j=await gh('PUT',{message:'사용기간 변경: '+note,content:b64e(JSON.stringify(data)),sha});sha=j.content.sha;render();msg('✓ 저장했어요 ('+note+') · 1~2분 안에 반영돼요','ok')}catch(e){msg(e.message,'bad');await load()}}
 function render(){const M=memos(),t=iso(today());$('list').innerHTML='';$('cnt').textContent='('+data.list.length+')';
  data.list.forEach((r,i)=>{const c=document.createElement('div');c.className='card';const live=r.e>=t;
   c.innerHTML='<div class="dev"></div><div class="mut memo"></div><div><span class="st"></span></div><div class="row"><button class="s" data-a="1">+1개월</button><button class="s" data-a="12">+1년</button><button class="s" data-a="d">날짜</button></div><div class="row"><button class="r" data-a="x">지금 중지</button><button class="r" data-a="del">삭제</button></div><input type="date" class="dd" hidden>';
