@@ -22,16 +22,15 @@ import java.util.ArrayList;
 
 public class Core {
     static final String CH = "callback_ask2";
-    static final String D_IN = "안녕하세요, 가앤부동산공인중개사사무소 가현지입니다.\n연락 주셔서 감사합니다. 명함 보내드려요.\nland.gaandgold.co.kr/card.html\n궁금하신 점은 언제든 편하게 연락 주세요.";
-    static final String D_OUT = "안녕하세요, 방금 통화드린 가앤부동산공인중개사사무소 가현지입니다.\n명함 남겨드려요. 번호 저장해 두시면 편하세요.\nland.gaandgold.co.kr/card.html";
-    static final String D_MISS = "안녕하세요, 가앤부동산공인중개사사무소 가현지입니다.\n지금 상담 중이라 전화를 못 받았어요. 확인하는 대로 바로 연락드릴게요.\n집을 내놓으실 거면 아래 링크로 1분이면 접수돼요.\nland.gaandgold.co.kr/sell.html";
+    static String def(Context c, int k) {
+        return c.getString(k == 0 ? R.string.d_in : k == 1 ? R.string.d_out : R.string.d_miss);
+    }
 
     static SharedPreferences p(Context c) { return c.getSharedPreferences("cfg", 0); }
     static String key(int k) { return k == 0 ? "in" : k == 1 ? "out" : "miss"; }
     static String label(int k) { return k == 0 ? "받은 전화" : k == 1 ? "건 전화" : "부재중 전화"; }
     static String msg(Context c, int k) {
-        String d = k == 0 ? D_IN : k == 1 ? D_OUT : D_MISS;
-        return p(c).getString("m_" + key(k), d);
+        return p(c).getString("m_" + key(k), def(c, k));
     }
     static boolean on(Context c, int k) { return p(c).getBoolean("on_" + key(k), true); }
 
@@ -150,7 +149,7 @@ public class Core {
                 .setContentTitle("명함 문자 보낼까요? (" + label(k) + ")")
                 .setContentText(who)
                 .setStyle(new Notification.BigTextStyle().bigText(who + "\n\n" + msg(c, k)))
-                .setColor(0xFF4A2F6B)
+                .setColor(c.getColor(R.color.brand))
                 .setCategory(Notification.CATEGORY_MESSAGE)
                 .setPriority(Notification.PRIORITY_MAX)
                 .setDefaults(Notification.DEFAULT_ALL)

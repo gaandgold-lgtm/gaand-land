@@ -27,7 +27,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity {
-    static final int PURPLE = 0xFF4A2F6B;
+    int PURPLE = 0xFF4A2F6B;
     EditText[] ed = new EditText[3];
     Switch[] sw = new Switch[3];
     Switch once;
@@ -84,6 +84,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        PURPLE = getColor(R.color.brand);
         Core.channel(this);
         LogJob.schedule(this);
         ScrollView sv = new ScrollView(this);
@@ -93,7 +94,7 @@ public class MainActivity extends Activity {
         l.setPadding(dp(18), dp(24), dp(18), dp(60));
         sv.addView(l);
 
-        l.addView(tv("가앤 명함문자", 26, true, PURPLE));
+        l.addView(tv(getString(R.string.app_name), 26, true, PURPLE));
         try { l.addView(tv("버전 " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName, 13, false, 0xFF888888)); } catch (Exception e) { }
         l.addView(tv("통화가 끝나면 '명함 문자 보낼까요?' 알림이 떠요.\n[보내기]를 누를 때만 문자가 갑니다.", 17, false, 0xFF333333));
         st = tv("", 17, true, 0xFFB00020);
@@ -205,8 +206,7 @@ public class MainActivity extends Activity {
     }
 
     void reset() {
-        String[] d = {Core.D_IN, Core.D_OUT, Core.D_MISS};
-        for (int k = 0; k < 3; k++) ed[k].setText(d[k]);
+        for (int k = 0; k < 3; k++) ed[k].setText(Core.def(this, k));
         save();
         toast("처음 문구로 되돌렸어요");
     }
