@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">콜명함</string>
+    <color name="brand">#24408E</color>
+    <bool name="need_license">true</bool>
+    <string name="seller_phone">01081868816</string>
+    <string name="d_in">안녕하세요, {상호} {이름}입니다.\n연락 주셔서 감사합니다.\n{링크}\n궁금하신 점은 언제든 편하게 연락 주세요.\n☎ {연락처}</string>
+    <string name="d_out">안녕하세요, 방금 통화드린 {상호} {이름}입니다.\n번호 저장해 두시면 편하세요.\n{링크}\n☎ {연락처}</string>
+    <string name="d_miss">안녕하세요, {상호} {이름}입니다.\n지금 통화가 어려워 전화를 못 받았어요. 확인하는 대로 바로 연락드릴게요.\n{링크}</string>
+</resources>
