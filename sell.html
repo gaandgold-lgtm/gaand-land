@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>숭의동 집 내놓기 매물 접수 | 가앤공인중개사사무소</title>
+<meta name="description" content="인천 미추홀구 숭의동·송림동 아파트, 빌라, 원룸, 상가 매물 접수. 1분이면 끝나는 간단 접수, 문자로 바로 전달됩니다. 가앤공인중개사사무소 010-8186-8816">
+<meta property="og:title" content="집 내놓기 1분 접수 · 가앤공인중개사사무소">
+<meta property="og:description" content="숭의동·미추홀구 매매, 전세, 월세 매물 접수. 문자로 바로 전달돼요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://land.gaandgold.co.kr/sell.html">
+<meta property="og:image" content="https://land.gaandgold.co.kr/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="style.css">
+<style>
+.f{display:grid;gap:14px}
+.f label{display:grid;gap:6px;font-size:14px;font-weight:600}
+.f input,.f select,.f textarea{font:inherit;font-size:16px;font-weight:400;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);width:100%}
+.f textarea{min-height:90px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{outline:2px solid var(--brand2);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-block;padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-weight:600;font-size:15px;cursor:pointer}
+.chips input:checked+span{background:var(--brand);border-color:var(--brand);color:#fff}
+.chips input:focus-visible+span{outline:2px solid var(--brand2)}
+.req{color:var(--brand2)}
+button.btn{border:0;width:100%;cursor:pointer;font-family:inherit}
+.msg{font-size:14px;color:#a3324a;min-height:20px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="./" style="border:0;padding:0;font-size:17px">가앤공인중개사사무소</a><a href="tel:01081868816">📞 전화</a></div></header>
+<main class="wrap">
+  <div class="hero">
+    <span class="tag">집주인·건물주 전용</span>
+    <h1>집 내놓기<br>1분이면 접수 끝</h1>
+    <p>아래 내용을 적고 <b>접수하기</b>를 누르면 문자가 자동으로 작성돼요. 보내기만 누르시면 확인 후 바로 연락드립니다.</p>
+  </div>
+
+  <section>
+    <form class="f" id="f" novalidate>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:6px">거래 종류 <span class="req">*</span></div>
+        <div class="chips">
+          <label><input type="radio" name="deal" value="매매" checked><span>매매</span></label>
+          <label><input type="radio" name="deal" value="전세"><span>전세</span></label>
+          <label><input type="radio" name="deal" value="월세"><span>월세</span></label>
+        </div></div>
+      <div><div style="font-size:14px;font-weight:600;margin-bottom:6px">종류 <span class="req">*</span></div>
+        <div class="chips">
+          <label><input type="radio" name="kind" value="아파트" checked><span>아파트</span></label>
+          <label><input type="radio" name="kind" value="빌라"><span>빌라</span></label>
+          <label><input type="radio" name="kind" value="원룸·투룸"><span>원룸·투룸</span></label>
+          <label><input type="radio" name="kind" value="상가·사무실"><span>상가·사무실</span></label>
+          <label><input type="radio" name="kind" value="주택·건물"><span>주택·건물</span></label>
+        </div></div>
+      <label>단지명 또는 주소 <span class="req">*</span>
+        <input name="addr" placeholder="예) 도원역 퍼스트하임 101동" autocomplete="street-address"></label>
+      <label>평형 또는 면적
+        <input name="size" placeholder="예) 84㎡, 25평"></label>
+      <label>원하시는 가격
+        <input name="price" placeholder="예) 매매 3억 / 보증금 1000 월 60"></label>
+      <label>입주 가능 시기
+        <select name="when"><option>바로 가능</option><option>1개월 이내</option><option>2~3개월 후</option><option>협의</option></select></label>
+      <label>성함 <span class="req">*</span>
+        <input name="name" placeholder="예) 홍길동" autocomplete="name"></label>
+      <label>연락받으실 번호 <span class="req">*</span>
+        <input name="tel" type="tel" inputmode="tel" placeholder="010-0000-0000" autocomplete="tel"></label>
+      <label>남기실 말씀
+        <textarea name="memo" placeholder="예) 세입자 있음, 내부 수리 완료, 통화 가능한 시간 등"></textarea></label>
+      <p class="msg" id="msg" role="alert"></p>
+      <button class="btn call" type="submit">📩 접수하기 (문자로 보내기)</button>
+      <a class="btn sms" href="tel:01081868816">📞 그냥 전화로 접수하기</a>
+      <p class="note">적어주신 내용은 사장님 휴대폰 문자로만 전달되며, 이 페이지에는 저장되지 않아요.</p>
+    </form>
+  </section>
+
+  <section>
+    <h2>접수 후 진행</h2>
+    <ul class="check">
+      <li>확인 후 당일 연락드립니다</li>
+      <li>최근 실거래 기준으로 시세를 안내합니다</li>
+      <li>중개보수는 계약 전에 미리 안내합니다</li>
+    </ul>
+  </section>
+</main>
+<footer><div class="wrap">© 가앤공인중개사사무소 · 인천 미추홀구 새천년로5번길 45 · 등록번호 28177-2026-00054</div></footer>
+<div class="bar"><div class="wrap">
+  <a class="btn call" href="tel:01081868816">📞 전화 상담</a>
+  <a class="btn sms" href="sms:01081868816">💬 문자</a>
+</div></div>
+<script>
+document.getElementById('f').addEventListener('submit',function(e){
+  e.preventDefault();var f=e.target,v=function(n){return (f.elements[n].value||'').trim()};
+  var m=document.getElementById('msg');
+  if(!v('addr')){m.textContent='단지명 또는 주소를 적어주세요.';f.elements.addr.focus();return}
+  if(!v('name')){m.textContent='성함을 적어주세요.';f.elements.name.focus();return}
+  if(v('tel').replace(/\D/g,'').length<9){m.textContent='연락받으실 번호를 확인해주세요.';f.elements.tel.focus();return}
+  m.textContent='';
+  var t='[가앤 매물접수]\n'+f.deal.value+' / '+f.kind.value+'\n주소: '+v('addr')+
+    (v('size')?'\n면적: '+v('size'):'')+(v('price')?'\n희망가: '+v('price'):'')+
+    '\n입주: '+v('when')+'\n성함: '+v('name')+'\n연락처: '+v('tel')+(v('memo')?'\n메모: '+v('memo'):'');
+  var sep=/iPhone|iPad|iPod/.test(navigator.userAgent)?'&':'?';
+  location.href='sms:01081868816'+sep+'body='+encodeURIComponent(t);
+});
+</script>
+</body>
+</html>
