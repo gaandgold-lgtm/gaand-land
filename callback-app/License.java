@@ -73,9 +73,9 @@ public class License {
     /** returns expiry epochDay if valid for this device, else -1 */
     static long check(Context c, String code) {
         try {
-            String t = code.trim().replaceAll("\\s", "");
-            int k = t.indexOf("#");
-            if (k >= 0) t = t.substring(k + 1);
+            java.util.regex.Matcher mt = java.util.regex.Pattern.compile("[A-Za-z0-9_-]{94}").matcher(code.replaceAll("\\s", ""));
+            if (!mt.find()) return -1;
+            String t = mt.group();
             byte[] b = Base64.decode(t, Base64.URL_SAFE | Base64.NO_PADDING | Base64.NO_WRAP);
             if (b.length != 70) return -1;
             byte[] d = dev(c);
