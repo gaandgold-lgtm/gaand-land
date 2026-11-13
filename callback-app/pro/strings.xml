@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">콜명함</string>
+    <string name="app_name">가앤 콜명함</string>
     <color name="brand">#24408E</color>
     <bool name="need_license">true</bool>
     <string name="seller_phone">01081868816</string>
