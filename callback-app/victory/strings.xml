@@ -2,9 +2,16 @@
 <resources>
     <string name="app_name">빅토리기프트 명함문자</string>
     <color name="brand">#1F2A4D</color>
-    <string name="d_in">안녕하세요, 빅토리기프트 임현석입니다.\n연락 주셔서 감사합니다.\n판촉물·기념품 제작 문의는 품목, 수량, 필요한 날짜를 문자로 남겨주시면 빠르게 견적 드릴게요.\n☎ 010-6720-7147</string>
-    <string name="d_out">안녕하세요, 방금 통화드린 빅토리기프트 임현석입니다.\n번호 저장해 두시면 견적·제작 문의하실 때 편하세요.\n판촉물 · 기념품 · 단체 선물 제작\n☎ 010-6720-7147</string>
-    <string name="d_miss">안녕하세요, 빅토리기프트 임현석입니다.\n지금 상담 중이라 전화를 못 받았어요. 확인하는 대로 바로 연락드릴게요.\n급한 견적은 품목, 수량, 필요한 날짜를 문자로 남겨주세요.</string>
+    <string name="d_in">안녕하세요, 빅토리기프트 임현석입니다.
+연락 주셔서 감사합니다. 판촉물·기념품 제작은 품목, 수량, 필요한 날짜만 알려주시면 빠르게 견적 드릴게요.
+https://land.gaandgold.co.kr/vg.html</string>
+    <string name="d_out">안녕하세요, 방금 통화드린 빅토리기프트 임현석입니다.
+명함 남겨드려요. 번호 저장해 두시면 견적 문의하실 때 편하세요.
+https://land.gaandgold.co.kr/vg.html</string>
+    <string name="d_miss">안녕하세요, 빅토리기프트 임현석입니다.
+지금 상담 중이라 전화를 못 받았어요. 확인하는 대로 바로 연락드릴게요.
+급한 견적은 아래 링크에서 문자로 남겨주세요.
+https://land.gaandgold.co.kr/vg.html</string>
     <bool name="need_license">false</bool>
     <string name="seller_phone">01081868816</string>
 </resources>
