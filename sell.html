@@ -34,7 +34,7 @@ button.btn{border:0;width:100%;cursor:pointer;font-family:inherit}
   <div id="topinapp" hidden style="background:#4a2f6b;color:#fff;border-radius:14px;padding:14px 16px;margin:16px 0 0;font-size:15px;line-height:1.55">
     <b>인스타그램·카카오톡 안에서 여셨네요.</b><br>이 화면에서는 문자 보내기가 안 돼요. 아래 버튼으로 크롬에서 열어 접수해 주세요.
     <a id="topext" href="#" style="display:flex;align-items:center;justify-content:center;height:50px;margin-top:10px;border-radius:12px;background:#fff;color:#4a2f6b;font-weight:800;text-decoration:none">🌐 크롬으로 열기</a>
-    <span id="iosguide" hidden style="display:block;margin-top:8px;font-size:13.5px;opacity:.9">아이폰: 오른쪽 위 ⋯ 버튼 → <b>외부 브라우저로 열기</b>(Safari)</span>
+    <span id="iosguide" hidden style="display:block;margin-top:10px;font-size:15px;background:rgba(255,255,255,.14);border-radius:10px;padding:10px 12px">오른쪽 위 <b>⋮</b> (점 3개) 버튼 → <b>외부 브라우저에서 열기</b> 또는 <b>Chrome에서 열기</b>를 눌러주세요.</span>
   </div>
 
   <div class="hero">
@@ -112,7 +112,7 @@ var inApp=/Instagram|FBAN|FBAV|KAKAOTALK|NAVER|Line\/|DaumApps|everytimeApp|BAND
 var f=document.getElementById('f'),m=document.getElementById('msg'),done=document.getElementById('done');
 var ext=document.getElementById('extbtn'),url='https://land.gaandgold.co.kr/sell.html',extHref='';
 if(/KAKAOTALK/i.test(ua))extHref='kakaotalk://web/openExternal?url='+encodeURIComponent(url);
-else if(isAnd)extHref='intent://land.gaandgold.co.kr/sell.html#Intent;scheme=https;package=com.android.chrome;end';
+
 if(inApp){
   document.getElementById('inapp').hidden=false;document.getElementById('topinapp').hidden=false;
   if(extHref){ext.href=extHref;ext.hidden=false;document.getElementById('topext').href=extHref}
