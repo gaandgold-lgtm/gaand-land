@@ -32,6 +32,8 @@ public class MainActivity extends Activity {
     Switch[] sw = new Switch[3];
     Switch once;
     Switch viaApp;
+    Switch imgOn;
+    android.widget.ImageView cardImg;
     TextView st;
     EditText test;
     TextView diag;
@@ -113,7 +115,17 @@ public class MainActivity extends Activity {
             lic = tv("", 17, true, 0xFF333333);
             l.addView(lic);
             l.addView(tv("내 기기번호: " + License.devCode(this), 18, true, 0xFF111111));
-            l.addView(btn("구매 문의 문자 보내기", false, v -> buy()));
+            l.addView(tv("사용할 기간을 고르고 신청 문자를 보내 주세요", 15, false, 0xFF555555));
+            android.widget.RadioGroup rg = new android.widget.RadioGroup(this);
+            for (int i = 0; i < PERIODS.length; i++) {
+                android.widget.RadioButton rb = new android.widget.RadioButton(this);
+                rb.setId(1000 + i); rb.setText(PERIODS[i]); rb.setTextSize(17);
+                rg.addView(rb);
+            }
+            rg.check(1000);
+            rg.setOnCheckedChangeListener((g, id) -> period = PERIODS[id - 1000]);
+            l.addView(rg);
+            l.addView(btn("사용 신청 문자 보내기", false, v -> buy()));
             l.addView(btn("사용 기간 다시 확인", false, v -> recheck(true)));
 
         }
@@ -152,6 +164,24 @@ public class MainActivity extends Activity {
         viaApp.setTextSize(16);
         viaApp.setChecked(Core.p(this).getBoolean("viaApp", true));
         l.addView(viaApp);
+        l.addView(tv("\n명함 이미지", 19, true, PURPLE));
+        l.addView(tv("등록해 두면 [보내기]를 눌렀을 때 문자에 명함 그림이 같이 붙어요. (위 '문자 앱에서 확인하고 보내기'가 켜져 있어야 해요. 그림이 붙으면 MMS로 가요)", 14, false, 0xFF666666));
+        cardImg = new android.widget.ImageView(this);
+        cardImg.setAdjustViewBounds(true);
+        cardImg.setMaxHeight(600);
+        l.addView(cardImg);
+        imgOn = new Switch(this);
+        imgOn.setText("문자에 명함 이미지 붙이기");
+        imgOn.setTextSize(16);
+        imgOn.setChecked(Core.p(this).getBoolean("img_on", true));
+        imgOn.setOnCheckedChangeListener((b, c) -> Core.p(this).edit().putBoolean("img_on", c).apply());
+        l.addView(imgOn);
+        l.addView(btn("명함 이미지 고르기 (갤러리)", false, v -> {
+            Intent pick = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE);
+            try { startActivityForResult(Intent.createChooser(pick, "명함 이미지 고르기"), 77); } catch (Exception e) { toast("갤러리를 열 수 없어요"); }
+        }));
+        l.addView(btn("명함 이미지 빼기", false, v -> { CardProvider.file(this).delete(); showCard(); toast("이미지를 뺐어요"); }));
+        showCard();
         l.addView(tv("끄면 [보내기] 한 번에 바로 가지만, 짧은 문자 여러 통으로 나눠서 가요.", 14, false, 0xFF666666));
         l.addView(btn("저장하기", true, v -> { save(); toast("저장했어요"); }));
         l.addView(btn("문구 처음 상태로 되돌리기", false, v -> reset()));
@@ -198,8 +228,33 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    static final String[] PERIODS = {"한시 무료", "1개월", "2개월", "3개월", "6개월", "1년"};
+    String period = PERIODS[0];
+
+    void showCard() {
+        java.io.File f = CardProvider.file(this);
+        if (f.exists()) { cardImg.setImageBitmap(android.graphics.BitmapFactory.decodeFile(f.getAbsolutePath())); cardImg.setVisibility(View.VISIBLE); }
+        else { cardImg.setImageDrawable(null); cardImg.setVisibility(View.GONE); }
+    }
+
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        super.onActivityResult(req, res, data);
+        if (req != 77 || res != RESULT_OK || data == null || data.getData() == null) return;
+        try {
+            android.graphics.Bitmap b;
+            try (java.io.InputStream in = getContentResolver().openInputStream(data.getData())) { b = android.graphics.BitmapFactory.decodeStream(in); }
+            if (b == null) { toast("이미지를 읽을 수 없어요"); return; }
+            int max = 1280, w = b.getWidth(), h = b.getHeight();
+            if (Math.max(w, h) > max) { float r = (float) max / Math.max(w, h); b = android.graphics.Bitmap.createScaledBitmap(b, Math.round(w * r), Math.round(h * r), true); }
+            try (java.io.FileOutputStream out = new java.io.FileOutputStream(CardProvider.file(this))) { b.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out); }
+            showCard();
+            toast("명함 이미지를 등록했어요");
+        } catch (Exception e) { toast("이미지 저장 실패: " + e.getMessage()); }
+    }
+
     void buy() {
-        String body = getString(R.string.app_name) + " 사용 신청\n기기번호: " + License.devCode(this);
+        String body = getString(R.string.app_name) + " 사용 신청\n신청 기간: " + period + "\n기기번호: " + License.devCode(this);
         Intent i = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + getString(R.string.seller_phone))).putExtra("sms_body", body);
         try { startActivity(i); } catch (Exception e) { toast("문자 앱을 열 수 없어요"); }
     }
