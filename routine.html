@@ -5,26 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#5B3A8C">
 <title>가앤 루틴 달력</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 /* 디자인: 아이보리 바탕 + 보라 포인트. 위에서부터 오늘 미션 → 월 달력 → 분석 */
 :root{
-  --bg:#F8F3E8;
-  --surface:#FFFDF8;
-  --ink:#241B30;
-  --muted:#6E6479;
-  --line:#E6DECE;
-  --accent:#5B3A8C;
-  --on-accent:#FBF7EE;
-  --lav:#EDE5F7;
-  --lav2:#DCCFF0;
-  --hero-a:#6E48A8;
-  --hero-b:#3C2566;
+  --bg:#F6F3EE;
+  --surface:#FFFFFF;
+  --ink:#1F1B26;
+  --muted:#7A7385;
+  --line:#ECE7DF;
+  --accent:#6A4C9C;
+  --on-accent:#FFFFFF;
+  --lav:#F2EEF8;
+  --lav2:#DED4EE;
+  --hero-a:#7B5CB3;
+  --hero-b:#4B347A;
   --on-hero:#FBF7EE;
   --danger:#B3261E;
-  --font:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -40,19 +38,20 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--font);-webkit-text-size-adjust:100%;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--font);letter-spacing:-.01em;-webkit-text-size-adjust:100%;min-height:100%}
 button,input,textarea,select{font:inherit;color:inherit}
 button{cursor:pointer}
 [hidden]{display:none!important}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 h1,h2,h3,p{margin:0}
 .wrap{max-width:760px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 1px 2px rgba(40,25,70,.04),0 8px 24px -18px rgba(40,25,70,.18)}
 
 /* 상단 */
 .top{display:flex;align-items:center;gap:10px}
-.mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--on-hero);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;letter-spacing:-.04em;flex:none}
-.top h1{font-size:20px;font-weight:900;letter-spacing:-.03em;flex:1;min-width:0}
+.mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--on-hero);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;letter-spacing:-.04em;flex:none}
+.top h1{font-size:19px;font-weight:700;letter-spacing:-.02em;flex:1;min-width:0}
+.top h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:1px}
 .plan{border:1px solid var(--line);background:var(--surface);border-radius:999px;height:36px;padding:0 12px;font-size:12px;font-weight:700;color:var(--accent);white-space:nowrap}
 .gear{width:36px;height:36px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:16px;line-height:1;padding:0}
 
@@ -60,10 +59,10 @@ h1,h2,h3,p{margin:0}
 .hero{border-radius:24px;padding:18px 16px 16px;color:var(--on-hero);background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.16),transparent 55%),linear-gradient(150deg,var(--hero-a),var(--hero-b));box-shadow:0 14px 30px -18px rgba(60,37,102,.8)}
 .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .eyebrow{font-size:13px;opacity:.8}
-.hero h2{font-size:25px;font-weight:900;letter-spacing:-.03em;margin-top:2px;text-wrap:balance}
+.hero h2{font-size:24px;font-weight:700;letter-spacing:-.025em;margin-top:2px;text-wrap:balance}
 .hero h2 em{font-style:normal;color:#FFE9A8}
 .left{flex:none;text-align:center;background:rgba(255,255,255,.14);border-radius:16px;padding:8px 14px;min-width:74px}
-.left b{display:block;font-size:30px;line-height:1.1;font-weight:900;font-variant-numeric:tabular-nums}
+.left b{display:block;font-size:30px;line-height:1.1;font-weight:700;font-variant-numeric:tabular-nums}
 .left span{font-size:11px;opacity:.85}
 .pbar{height:8px;border-radius:999px;background:rgba(255,255,255,.2);margin:14px 0 12px;overflow:hidden}
 .pbar i{display:block;height:100%;background:#FFE9A8;border-radius:999px;transition:width .3s ease}
@@ -77,13 +76,13 @@ h1,h2,h3,p{margin:0}
 .trow[aria-pressed="true"] .tick{background:#FFE9A8;border-color:#FFE9A8}
 .trow[aria-pressed="true"] .tick::after{content:"";width:7px;height:13px;border:solid #3C2566;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
 .hfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;font-size:14px}
-.hfoot b{font-size:18px;font-weight:900}
-.hbtn{height:40px;padding:0 16px;border-radius:999px;border:0;background:#FFE9A8;color:#3C2566;font-weight:900}
+.hfoot b{font-size:18px;font-weight:700}
+.hbtn{height:40px;padding:0 16px;border-radius:999px;border:0;background:#FFE9A8;color:#3C2566;font-weight:700}
 .hint{font-size:13px;opacity:.85}
 
 /* 월 이동 */
 .month{display:flex;align-items:center;gap:8px}
-.month .lbl{flex:1;text-align:center;font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}
+.month .lbl{flex:1;text-align:center;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
 .sq{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1;padding:0}
 .pill{height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-weight:700}
 
@@ -94,17 +93,17 @@ h1,h2,h3,p{margin:0}
 .donut .trk{stroke:var(--lav)}
 .donut .val{stroke:var(--accent);transition:stroke-dasharray .35s ease}
 .donut .pc{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted)}
-.donut .pc b{font-size:28px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:1px}
+.donut .pc b{font-size:28px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:1px}
 .stats{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat{background:var(--lav);border-radius:12px;padding:8px 4px;text-align:center;min-width:0}
 .stat span{display:block;font-size:12px;color:var(--muted)}
-.stat b{display:block;font-size:19px;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat b{display:block;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .sumbtn{grid-column:1/-1;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:14px;color:var(--accent)}
 
 /* 달력 표 */
 .board{overflow:hidden}
 .bhead{display:flex;align-items:baseline;justify-content:space-between;padding:14px 14px 10px;gap:8px}
-.bhead h2{font-size:16px;font-weight:900}
+.bhead h2{font-size:16px;font-weight:700}
 .bhead small{color:var(--muted);font-size:12px}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 table{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
@@ -134,42 +133,59 @@ td.today{background:var(--lav)}
 .empty{padding:26px 16px;color:var(--muted);text-align:left}
 .bfoot{margin:0;padding:10px 14px 14px;font-size:12px;color:var(--muted)}
 
-.add{height:50px;border-radius:16px;border:1.5px dashed var(--accent);background:transparent;color:var(--accent);font-weight:900}
+.add{height:50px;border-radius:16px;border:1.5px dashed var(--accent);background:transparent;color:var(--accent);font-weight:700}
 
 /* 분석 */
 .analysis{padding:14px}
-.analysis h2{font-size:16px;font-weight:900;margin-bottom:6px}
+.analysis h2{font-size:16px;font-weight:700;margin-bottom:6px}
 .arow{padding:12px 0;border-top:1px solid var(--line)}
 .arow.first{border-top:0}
 .atop{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .an{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .av{font-size:13px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-.av b{color:var(--ink);font-weight:900}
+.av b{color:var(--ink);font-weight:700}
 .abar{display:flex;align-items:center;gap:10px;margin-top:8px}
 .trk2{flex:1;height:12px;background:var(--lav);border-radius:999px;overflow:hidden}
 .trk2 i{display:block;height:100%;background:linear-gradient(90deg,var(--hero-a),var(--accent));border-radius:999px;transition:width .3s ease}
-.abar em{font-style:normal;font-weight:900;font-size:13px;min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+.abar em{font-style:normal;font-weight:700;font-size:13px;min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
 .foot{display:flex;justify-content:center}
 .link{border:0;background:transparent;color:var(--muted);text-decoration:underline;font-size:13px;padding:8px}
+
+/* 알림 바 */
+.alarm{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.al-t{flex:1;min-width:0}
+.al-t b{display:block;font-size:15px;font-weight:600;white-space:nowrap}
+.al-t small{display:block;font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.al-ic{width:36px;height:36px;border-radius:12px;background:var(--lav);display:flex;align-items:center;justify-content:center;flex:none}
+.al-ic svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.timeinp.sm{height:38px;font-size:15px;font-weight:600;padding:0 8px;border-radius:10px;width:auto}
+.timeinp:disabled{opacity:.45}
+input.sw{appearance:none;-webkit-appearance:none;width:48px;height:28px;border-radius:999px;background:var(--lav2);position:relative;flex:none;cursor:pointer;transition:background .2s;margin:0}
+input.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
+input.sw:checked{background:var(--accent)}
+input.sw:checked::after{transform:translateX(20px)}
+.credit{text-align:center;font-size:12px;color:var(--muted);line-height:1.7;padding:6px 0 4px}
+.credit b{font-weight:600;color:var(--ink)}
+.credit a{color:inherit;text-decoration:none;font-variant-numeric:tabular-nums}
 
 /* 잠금 화면 */
 .lock{min-height:100vh;padding:max(24px,env(safe-area-inset-top)) 18px calc(32px + env(safe-area-inset-bottom));background:radial-gradient(90% 50% at 90% -5%,rgba(110,72,168,.28),transparent 60%),radial-gradient(70% 40% at -10% 100%,rgba(110,72,168,.18),transparent 60%),var(--bg)}
 .lock-in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 .logo{width:64px;height:64px;border-radius:20px;font-size:24px}
-.lock h1{font-size:30px;font-weight:900;letter-spacing:-.04em;line-height:1.2;text-wrap:balance}
+.lock h1{font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1.2;text-wrap:balance}
 .lock .sub{color:var(--muted)}
 .lcard{padding:16px;display:flex;flex-direction:column;gap:12px}
-.lcard h2{font-size:16px;font-weight:900}
+.lcard h2{font-size:16px;font-weight:700}
 .devrow{display:flex;align-items:center;gap:10px;background:var(--lav);border-radius:14px;padding:10px 12px}
-.devrow code{flex:1;font:900 22px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em}
+.devrow code{flex:1;font:600 22px/1.2 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.06em}
 .mini{height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-size:13px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .pchip{height:42px;padding:0 14px;border-radius:999px;border:1.5px solid var(--lav2);background:transparent;font-weight:700}
 .pchip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .inp{width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:10px 12px;font-size:16px}
 textarea.inp{min-height:84px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;word-break:break-all}
-.big{height:52px;border-radius:14px;border:0;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--on-hero);font-weight:900;font-size:16px}
-.ghost{height:48px;border-radius:14px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-weight:900}
+.big{height:52px;border-radius:14px;border:0;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--on-hero);font-weight:700;font-size:16px}
+.ghost{height:48px;border-radius:14px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-weight:700}
 .msg{font-size:13px;min-height:19px;color:var(--muted)}
 .msg.bad{color:var(--danger)}
 .msg.good{color:var(--accent);font-weight:700}
@@ -181,8 +197,8 @@ textarea.inp{min-height:84px;resize:vertical;font-family:ui-monospace,Menlo,Cons
 .scrim{position:fixed;inset:0;background:rgba(20,10,35,.55);z-index:30;display:none}
 .sheet{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;background:var(--surface);border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));z-index:31;display:none;max-height:92%;overflow:auto}
 .on{display:block}
-.sheet h2{font-size:18px;font-weight:900;margin-bottom:12px}
-.sheet h3{font-size:14px;font-weight:900;margin:16px 0 8px}
+.sheet h2{font-size:18px;font-weight:700;margin-bottom:12px}
+.sheet h3{font-size:14px;font-weight:700;margin:16px 0 8px}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .field label,.lab{font-size:13px;color:var(--muted)}
 .emchips{display:flex;flex-wrap:wrap;gap:6px}
@@ -197,7 +213,7 @@ textarea.inp{min-height:84px;resize:vertical;font-family:ui-monospace,Menlo,Cons
 .kv:first-of-type{border-top:0}
 .kv span:first-child{color:var(--muted)}
 .tog{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0}
-.tog input[type=checkbox]{width:24px;height:24px;accent-color:var(--accent)}
+
 .timeinp{height:48px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:18px;font-weight:700}
 .linkbtn{display:flex;align-items:center;justify-content:center;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700;text-decoration:none;color:var(--ink);width:100%}
 .stack{display:flex;flex-direction:column;gap:8px}
@@ -230,12 +246,12 @@ textarea.inp{min-height:84px;resize:vertical;font-family:ui-monospace,Menlo,Cons
 <div id="lock" class="lock" hidden></div>
 <main id="main" class="wrap" hidden>
   <header class="top">
-    <div class="mark" aria-hidden="true">G&amp;</div>
     <h1>가앤 루틴 달력</h1>
     <button class="plan" id="planBtn" data-act="settings"></button>
     <button class="gear" data-act="settings" aria-label="설정">⚙</button>
   </header>
   <section class="hero" id="hero" aria-label="오늘의 미션"></section>
+  <section class="card alarm" id="alarmBar" aria-label="알람 설정"></section>
   <nav class="month" aria-label="월 이동">
     <button class="sq" id="prev" aria-label="이전 달">‹</button>
     <div class="lbl" id="monthLabel"></div>
@@ -251,6 +267,7 @@ textarea.inp{min-height:84px;resize:vertical;font-family:ui-monospace,Menlo,Cons
   <button class="add" data-act="add">+ 루틴 추가</button>
   <section class="card analysis" id="analysis" aria-label="루틴별 분석"></section>
   <div class="foot"><button class="link" data-act="settings">설정 · 알림 · 백업 · 사용 기간</button></div>
+  <footer class="credit"><b>가앤</b>이 만든 앱 · 문의 <a href="tel:01081868816">010-8186-8816</a></footer>
 </main>
 
 <div class="scrim" id="scrim"></div>
@@ -459,13 +476,13 @@ function codeBlock(){
 function renderLock(){
   var expired=!!(lic&&lic.exp);
   $('lock').innerHTML='<div class="lock-in">'+
-    '<div class="mark logo" aria-hidden="true">G&amp;</div>'+
     '<h1>'+(expired?'이용 기간이 끝났어요':'가앤 루틴 달력')+'</h1>'+
     '<p class="sub">'+(expired?'기록은 그대로 남아 있어요. 연장하면 바로 이어서 쓸 수 있어요.':'매일 체크하고, 끝내면 자랑하는 루틴 달력이에요. 사용 신청 문자를 보내 주세요.')+'</p>'+
     (storageOk?'':'<p class="msg bad">이 브라우저가 저장을 막고 있어요. 시크릿 모드를 끄고 열어 주세요.</p>')+
     '<section class="card lcard"><h2>1. 사용 신청</h2>'+reqBlock()+'</section>'+
     '<section class="card lcard"><h2>2. 등록되면 확인</h2>'+codeBlock()+'</section>'+
-    (APP?'':'<section class="card lcard"><h2>알림까지 받으려면</h2><p class="note">앱으로 쓰면 정한 시간에 남은 루틴을 알림으로 알려줘요. 앱을 설치했다면 앱에서 사용 신청을 해 주세요 (기기번호가 달라요).</p>'+appBlock()+'</section>')+
+    (APP?'':'<section class="card lcard"><h2>알람까지 받으려면</h2><p class="note">앱으로 쓰면 정한 시간에 남은 루틴이 있을 때 휴대폰 알람이 울려요. 앱을 설치했다면 앱에서 사용 신청을 해 주세요 (기기번호가 달라요).</p>'+appBlock()+'</section>')+
+    '<footer class="credit"><b>가앤</b>이 만든 앱 · 문의 <a href="tel:01081868816">010-8186-8816</a></footer>'+
     '</div>';
   $('lock').hidden=false; $('main').hidden=true;
   appSync();
@@ -484,7 +501,7 @@ function render(){
   if(!isActive()){ renderLock(); return; }
   $('lock').hidden=true; $('lock').innerHTML=''; $('main').hidden=false;
   $('planBtn').textContent=planLabel();
-  renderHero(); renderMonth(); renderSummary(); renderBoard(); renderAnalysis(); updateBadge();
+  renderHero(); renderAlarm(); renderMonth(); renderSummary(); renderBoard(); renderAnalysis(); updateBadge();
 }
 function appSync(){
   if(!APP) return;
@@ -495,13 +512,19 @@ function appSync(){
   }catch(e){}
 }
 function appBlock(){
-  return APP?'':'<a class="linkbtn" href="'+APK_URL+'">📲 안드로이드 앱으로 받기 (알림이 와요)</a>';
+  return APP?'':'<a class="linkbtn" href="'+APK_URL+'">📲 안드로이드 앱으로 받기 (알람이 울려요)</a>';
 }
 function updateBadge(){
   appSync();
   var n=remaining().length, has=state.habits.length>0;
   document.title=(has&&n?'('+n+') ':'')+BRAND;
   try{ if(has&&n&&navigator.setAppBadge) navigator.setAppBadge(n); else if(navigator.clearAppBadge) navigator.clearAppBadge(); }catch(e){}
+}
+function renderAlarm(){
+  $('alarmBar').innerHTML='<span class="al-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>'+
+    '<div class="al-t"><b>알람</b><small>'+(prefs.on?'매일 울려요':'꺼져 있어요')+'</small></div>'+
+    '<input class="timeinp sm" type="time" id="remTime2" value="'+prefs.time+'" aria-label="알림 시간"'+(prefs.on?'':' disabled')+'>'+
+    '<input type="checkbox" class="sw" id="remOn2" role="switch" aria-label="알림 켜기·끄기" '+(prefs.on?'checked':'')+'>';
 }
 function renderHero(){
   var k=todayKey(), hs=state.habits, left=remaining(), done=hs.length-left.length, all=hs.length>0&&left.length===0;
@@ -600,9 +623,9 @@ function confetti(){
 function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
 function fit(g,t,max){ if(g.measureText(t).width<=max) return t; while(t.length>1&&g.measureText(t+'…').width>max) t=t.slice(0,-1); return t+'…'; }
 async function drawCard(kind){
-  try{ await document.fonts.load('900 60px "Noto Sans KR"'); await document.fonts.load('700 40px "Noto Sans KR"'); }catch(e){}
+  try{ await document.fonts.load('800 60px "Pretendard Variable"'); await document.fonts.load('600 40px "Pretendard Variable"'); }catch(e){}
   var W=1080,H=1350,c=document.createElement('canvas'); c.width=W; c.height=H;
-  var g=c.getContext('2d'), FF='"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif';
+  var g=c.getContext('2d'), FF='"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif';
   g.fillStyle='#F8F3E8'; g.fillRect(0,0,W,H);
   var rg=g.createRadialGradient(980,80,10,980,80,520); rg.addColorStop(0,'rgba(160,120,210,.35)'); rg.addColorStop(1,'rgba(160,120,210,0)'); g.fillStyle=rg; g.fillRect(0,0,W,H);
   var rg2=g.createRadialGradient(40,1300,10,40,1300,480); rg2.addColorStop(0,'rgba(160,120,210,.28)'); rg2.addColorStop(1,'rgba(160,120,210,0)'); g.fillStyle=rg2; g.fillRect(0,0,W,H);
@@ -613,7 +636,7 @@ async function drawCard(kind){
   var hs=state.habits, y0;
   if(kind==='today'){
     g.fillStyle='rgba(251,247,238,.8)'; g.font='500 38px '+FF; g.fillText((today.m+1)+'월 '+today.d+'일 '+WD[new Date(today.y,today.m,today.d).getDay()]+'요일',110,150);
-    g.fillStyle='#FBF7EE'; g.font='900 100px '+FF; g.fillText('오늘 미션 완료',110,275);
+    g.fillStyle='#FBF7EE'; g.font='800 100px '+FF; g.fillText('오늘 미션 완료',110,275);
     g.fillStyle='#FFE9A8'; g.font='700 40px '+FF; g.fillText('루틴 '+hs.length+'개를 모두 해냈어요',110,340);
     var rows=Math.min(hs.length,6), more=hs.length>6?1:0, ph=60+(rows+more)*88;
     g.save(); g.shadowColor='rgba(60,37,102,.18)'; g.shadowBlur=40; g.shadowOffsetY=16; rr(g,60,430,960,ph,36); g.fillStyle='#FFFDF8'; g.fill(); g.restore();
@@ -630,19 +653,19 @@ async function drawCard(kind){
     [[ '연속 달성', st+'일' ],[ (today.m+1)+'월 달성률', s.pct+'%' ]].forEach(function(it,ix){
       var x=60+ix*490; rr(g,x,y0,470,170,32); g.fillStyle='#EDE5F7'; g.fill();
       g.fillStyle='#6E6479'; g.font='500 34px '+FF; g.fillText(it[0],x+36,y0+56);
-      g.fillStyle='#3C2566'; g.font='900 78px '+FF; g.fillText(it[1],x+36,y0+138);
+      g.fillStyle='#3C2566'; g.font='800 78px '+FF; g.fillText(it[1],x+36,y0+138);
     });
   } else {
     var s2=calcStats(state,view.y,view.m);
     g.fillStyle='rgba(251,247,238,.8)'; g.font='500 38px '+FF; g.fillText(view.y+'년',110,150);
-    g.fillStyle='#FBF7EE'; g.font='900 100px '+FF; g.fillText((view.m+1)+'월 루틴 결과',110,275);
+    g.fillStyle='#FBF7EE'; g.font='800 100px '+FF; g.fillText((view.m+1)+'월 루틴 결과',110,275);
     g.fillStyle='#FFE9A8'; g.font='700 40px '+FF; g.fillText(s2.done+'번 체크했어요',110,340);
     rr(g,60,430,960,300,36); g.fillStyle='#FFFDF8'; g.fill();
     g.lineWidth=36; g.lineCap='round'; g.strokeStyle='#EDE5F7'; g.beginPath(); g.arc(250,580,100,0,Math.PI*2); g.stroke();
     g.strokeStyle='#5B3A8C'; g.beginPath(); g.arc(250,580,100,-Math.PI/2,-Math.PI/2+Math.PI*2*s2.pct/100); g.stroke();
-    g.fillStyle='#241B30'; g.textAlign='center'; g.font='900 64px '+FF; g.fillText(s2.pct+'%',250,602); g.textAlign='left';
+    g.fillStyle='#241B30'; g.textAlign='center'; g.font='800 64px '+FF; g.fillText(s2.pct+'%',250,602); g.textAlign='left';
     g.fillStyle='#6E6479'; g.font='500 36px '+FF; g.fillText('달성률',440,520);
-    g.fillStyle='#3C2566'; g.font='900 76px '+FF; g.fillText(s2.done+' / '+s2.total,440,605);
+    g.fillStyle='#3C2566'; g.font='800 76px '+FF; g.fillText(s2.done+' / '+s2.total,440,605);
     g.fillStyle='#6E6479'; g.font='500 34px '+FF; g.fillText('연속 미션 '+st+'일',440,670);
     var top=s2.per.map(function(p,i){return {p:p,h:hs[i]};}).sort(function(a,b){return b.p.pct-a.p.pct;}).slice(0,5);
     top.forEach(function(it,i){
@@ -651,10 +674,10 @@ async function drawCard(kind){
       g.font='700 38px '+FF; g.fillText(fit(g,it.h.name,300),145,cy+14);
       rr(g,470,cy-14,440,28,14); g.fillStyle='#EDE5F7'; g.fill();
       if(it.p.pct>0){ rr(g,470,cy-14,Math.max(28,440*it.p.pct/100),28,14); g.fillStyle='#5B3A8C'; g.fill(); }
-      g.fillStyle='#3C2566'; g.font='900 34px '+FF; g.textAlign='right'; g.fillText(it.p.pct+'%',1000,cy+12); g.textAlign='left';
+      g.fillStyle='#3C2566'; g.font='800 34px '+FF; g.textAlign='right'; g.fillText(it.p.pct+'%',1000,cy+12); g.textAlign='left';
     });
   }
-  g.fillStyle='#5B3A8C'; g.font='900 44px '+FF; g.textAlign='center'; g.fillText(BRAND,W/2,1280); g.textAlign='left';
+  g.fillStyle='#5B3A8C'; g.font='800 44px '+FF; g.textAlign='center'; g.fillText(BRAND,W/2,1280); g.textAlign='left';
   return c;
 }
 var lastCanvas=null, lastText='';
@@ -726,10 +749,11 @@ function openSettings(){
   var near=(!PREVIEW&&lic&&lic.exp&&lic.exp<20900101&&daysLeft(lic.exp,new Date())<=7);
   var ln=reminderLinks();
   showSheet('<h2>설정</h2>'+
-    '<h3>남은 루틴 알림</h3>'+
-    '<div class="tog"><label for="remOn">정해 둔 시간 이후에 남은 루틴이 있으면 팝업으로 알려줘요</label><input type="checkbox" id="remOn" '+(prefs.on?'checked':'')+'></div>'+
-    '<div class="field"><label for="remTime">알림 시간</label><input class="timeinp" type="time" id="remTime" value="'+prefs.time+'"></div>'+
-    (APP?'<p class="note">정한 시간에 남은 루틴이 있으면 휴대폰 알림이 와요. 다 끝낼 때까지 1시간마다 다시 알려줘요 (밤 11시까지).</p>':
+    '<h3>알람</h3>'+
+    '<div class="tog"><label for="remOn">알람 켜기 · 끄기</label><input type="checkbox" class="sw" role="switch" id="remOn" '+(prefs.on?'checked':'')+'></div>'+
+    '<div class="field"><label for="remTime">알람 시간</label><input class="timeinp" type="time" id="remTime" value="'+prefs.time+'"></div>'+
+    (APP?'<p class="note">정한 시간에 남은 루틴이 있으면 휴대폰 알람처럼 소리와 진동으로 울려요. 다 끝낼 때까지 1시간마다 다시 울려요 (밤 11시까지). 알림의 [알람 끄기]로 멈출 수 있어요.</p>'+
+      '<div class="stack" style="margin-top:8px"><button class="btn" data-act="alarm">시계 앱에도 매일 알람 만들기</button></div>':
     '<p class="note" style="margin-bottom:8px">앱을 닫아 두면 팝업이 뜨지 않아요. 아래 버튼으로 폰 알람을 만들어 두면 앱이 꺼져 있어도 매일 알려줘요.</p>'+
     '<div class="stack"><a class="linkbtn" id="gcalLink" href="'+esc(ln.g)+'" target="_blank" rel="noopener">구글 캘린더에 매일 알림 만들기</a>'+
     '<button class="btn" data-act="ics">캘린더 파일(.ics) 받기</button>'+
@@ -828,8 +852,8 @@ document.addEventListener('click',async function(e){
   else if(act==='alarm'){ try{ location.href=reminderLinks().intent; toast('시계 앱이 열리지 않으면 캘린더 알림을 써 주세요'); }catch(er){ toast('이 기기에서는 열 수 없어요'); } }
 });
 document.addEventListener('change',function(e){
-  if(e.target.id==='remOn'){ prefs.on=e.target.checked; savePrefs(); appSync(); toast(prefs.on?'알림을 켰어요':'알림을 껐어요'); }
-  if(e.target.id==='remTime'&&/^\d\d:\d\d$/.test(e.target.value)){ prefs.time=e.target.value; savePrefs(); var l=$('gcalLink'); if(l) l.href=reminderLinks().g; appSync(); toast('알림 시간을 '+prefs.time+'으로 바꿨어요'); }
+  if(e.target.id==='remOn'||e.target.id==='remOn2'){ prefs.on=e.target.checked; renderAlarm(); var o1=$('remOn'); if(o1) o1.checked=prefs.on; savePrefs(); appSync(); toast(prefs.on?'알람을 켰어요':'알람을 껐어요'); }
+  if((e.target.id==='remTime'||e.target.id==='remTime2')&&/^\d\d:\d\d$/.test(e.target.value)){ prefs.time=e.target.value; renderAlarm(); var t1=$('remTime'); if(t1) t1.value=prefs.time; savePrefs(); var l=$('gcalLink'); if(l) l.href=reminderLinks().g; appSync(); toast('알람 시간을 '+prefs.time+'으로 바꿨어요'); }
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&sheetOpen) closeSheet();
