@@ -328,6 +328,8 @@ var LIC_RAW='https://raw.githubusercontent.com/gaandgold-lgtm/gaand-land/main/li
 var PREVIEW=!/(^|\.)gaandgold\.co\.kr$|github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 var OWNER_PHONE='01081868816';   /* 신청 문자를 받을 번호 */
 var BRAND='가앤 루틴 달력';
+var APP=!!window.GaanApp;   /* 안드로이드 앱 안에서 열렸는지 */
+var APK_URL='https://github.com/gaandgold-lgtm/gaand-land/releases/download/routine-app/gaan-routine.apk';
 var PERIODS=['1개월','2개월','3개월','6개월','1년'];
 var EMOJIS=['⏰','📖','✏️','💪','💧','🎯','🏃','🧘','🥗','🛏️','📸','💰','🧹','🙏','🌿','🎹'];
 var LSK={data:'gaan-routine-v1',dev:'gaan-routine-device',lic:'gaan-routine-license',name:'gaan-routine-name',prefs:'gaan-routine-prefs'};
@@ -463,8 +465,10 @@ function renderLock(){
     (storageOk?'':'<p class="msg bad">이 브라우저가 저장을 막고 있어요. 시크릿 모드를 끄고 열어 주세요.</p>')+
     '<section class="card lcard"><h2>1. 사용 신청</h2>'+reqBlock()+'</section>'+
     '<section class="card lcard"><h2>2. 등록되면 확인</h2>'+codeBlock()+'</section>'+
+    (APP?'':'<section class="card lcard"><h2>알림까지 받으려면</h2><p class="note">앱으로 쓰면 정한 시간에 남은 루틴을 알림으로 알려줘요. 앱을 설치했다면 앱에서 사용 신청을 해 주세요 (기기번호가 달라요).</p>'+appBlock()+'</section>')+
     '</div>';
   $('lock').hidden=false; $('main').hidden=true;
+  appSync();
 }
 function renderApp(){
   $('lock').hidden=true; $('main').hidden=false;
@@ -482,7 +486,19 @@ function render(){
   $('planBtn').textContent=planLabel();
   renderHero(); renderMonth(); renderSummary(); renderBoard(); renderAnalysis(); updateBadge();
 }
+function appSync(){
+  if(!APP) return;
+  try{
+    var left=remaining();
+    window.GaanApp.sync(JSON.stringify({date:todayKey(),remaining:left.length,total:state.habits.length,
+      names:left.map(function(h){return (h.emoji?h.emoji+' ':'')+h.name;}).join(', '),on:prefs.on,time:prefs.time,active:isActive()}));
+  }catch(e){}
+}
+function appBlock(){
+  return APP?'':'<a class="linkbtn" href="'+APK_URL+'">📲 안드로이드 앱으로 받기 (알림이 와요)</a>';
+}
 function updateBadge(){
+  appSync();
   var n=remaining().length, has=state.habits.length>0;
   document.title=(has&&n?'('+n+') ':'')+BRAND;
   try{ if(has&&n&&navigator.setAppBadge) navigator.setAppBadge(n); else if(navigator.clearAppBadge) navigator.clearAppBadge(); }catch(e){}
@@ -656,6 +672,7 @@ function celebrate(){ confetti(); try{ if(navigator.vibrate) navigator.vibrate([
 function blobOf(c){return new Promise(function(res){c.toBlob(function(b){res(b);},'image/png');});}
 async function doShare(){
   if(!lastCanvas) return;
+  if(APP){ try{ if(window.GaanApp.shareImage(lastCanvas.toDataURL('image/png'),lastText)) return; }catch(e){} }
   var blob=await blobOf(lastCanvas), file=null;
   try{ file=new File([blob],'gaan-routine.png',{type:'image/png'}); }catch(e){}
   var data={title:BRAND,text:lastText};
@@ -668,6 +685,7 @@ async function doShare(){
 }
 async function saveImg(){
   if(!lastCanvas) return;
+  if(APP){ try{ if(window.GaanApp.saveImage(lastCanvas.toDataURL('image/png'),'가앤루틴_'+todayKey()+'.png')) return; }catch(e){} }
   try{
     var blob=await blobOf(lastCanvas), a=document.createElement('a');
     a.href=URL.createObjectURL(blob); a.download='가앤루틴_'+todayKey()+'.png'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
@@ -711,11 +729,12 @@ function openSettings(){
     '<h3>남은 루틴 알림</h3>'+
     '<div class="tog"><label for="remOn">정해 둔 시간 이후에 남은 루틴이 있으면 팝업으로 알려줘요</label><input type="checkbox" id="remOn" '+(prefs.on?'checked':'')+'></div>'+
     '<div class="field"><label for="remTime">알림 시간</label><input class="timeinp" type="time" id="remTime" value="'+prefs.time+'"></div>'+
+    (APP?'<p class="note">정한 시간에 남은 루틴이 있으면 휴대폰 알림이 와요. 다 끝낼 때까지 1시간마다 다시 알려줘요 (밤 11시까지).</p>':
     '<p class="note" style="margin-bottom:8px">앱을 닫아 두면 팝업이 뜨지 않아요. 아래 버튼으로 폰 알람을 만들어 두면 앱이 꺼져 있어도 매일 알려줘요.</p>'+
     '<div class="stack"><a class="linkbtn" id="gcalLink" href="'+esc(ln.g)+'" target="_blank" rel="noopener">구글 캘린더에 매일 알림 만들기</a>'+
     '<button class="btn" data-act="ics">캘린더 파일(.ics) 받기</button>'+
     '<button class="btn" data-act="alarm">시계 앱에 알람 만들기 (안드로이드)</button></div>'+
-    '<p class="note" style="margin-top:6px">시계 알람은 기기에 따라 안 열릴 수 있어요. 그땐 캘린더 알림을 써 주세요. 알람 문구는 고정이라 남은 개수는 앱에서 보여요.</p>'+
+    '<p class="note" style="margin-top:6px">시계 알람은 기기에 따라 안 열릴 수 있어요. 그땐 캘린더 알림을 써 주세요. 알람 문구는 고정이라 남은 개수는 앱에서 보여요.</p>'+'<div class="stack" style="margin-top:8px">'+appBlock()+'</div>')+
     '<h3>사용 기간</h3>'+kv+
     (near?'<p class="msg bad">사용 기간이 곧 끝나요. 연장을 신청해 주세요.</p>':'')+
     (PREVIEW?'':'<div class="stack" style="margin-top:8px">'+reqBlock()+'</div><div class="stack" style="margin-top:12px">'+codeBlock()+'</div>')+
@@ -723,7 +742,7 @@ function openSettings(){
     '<div class="row"><button class="btn" data-act="copybackup">백업 복사</button></div>'+
     '<textarea class="inp" id="restoreBox" rows="3" placeholder="복원할 백업을 여기에 붙여 넣으세요" spellcheck="false" style="margin-top:8px"></textarea>'+
     '<div class="row"><button class="btn" data-act="restore" id="restoreBtn">복원하기</button></div><p class="msg" id="restoreMsg"></p>'+
-    '<h3>홈 화면에 추가</h3><p class="note">크롬 오른쪽 위 ⋮ 메뉴에서 “홈 화면에 추가”를 누르면 앱처럼 바로 열 수 있어요.</p>'+
+    (APP?'':'<h3>홈 화면에 추가</h3><p class="note">크롬 오른쪽 위 ⋮ 메뉴에서 “홈 화면에 추가”를 누르면 앱처럼 바로 열 수 있어요.</p>')+
     '<div class="row"><button class="btn main" data-act="close">닫기</button></div>');
 }
 function showReminder(n){
@@ -809,8 +828,8 @@ document.addEventListener('click',async function(e){
   else if(act==='alarm'){ try{ location.href=reminderLinks().intent; toast('시계 앱이 열리지 않으면 캘린더 알림을 써 주세요'); }catch(er){ toast('이 기기에서는 열 수 없어요'); } }
 });
 document.addEventListener('change',function(e){
-  if(e.target.id==='remOn'){ prefs.on=e.target.checked; savePrefs(); toast(prefs.on?'팝업 알림을 켰어요':'팝업 알림을 껐어요'); }
-  if(e.target.id==='remTime'&&/^\d\d:\d\d$/.test(e.target.value)){ prefs.time=e.target.value; savePrefs(); var l=$('gcalLink'); if(l) l.href=reminderLinks().g; toast('알림 시간을 '+prefs.time+'으로 바꿨어요'); }
+  if(e.target.id==='remOn'){ prefs.on=e.target.checked; savePrefs(); appSync(); toast(prefs.on?'알림을 켰어요':'알림을 껐어요'); }
+  if(e.target.id==='remTime'&&/^\d\d:\d\d$/.test(e.target.value)){ prefs.time=e.target.value; savePrefs(); var l=$('gcalLink'); if(l) l.href=reminderLinks().g; appSync(); toast('알림 시간을 '+prefs.time+'으로 바꿨어요'); }
 });
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&sheetOpen) closeSheet();
