@@ -32,7 +32,36 @@ public class Core {
     static String raw(Context c, int k) { return p(c).getString("m_" + key(k), def(c, k)); }
 
     static String msg(Context c, int k) {
-        return fill(c, p(c).getString("m_" + key(k), def(c, k)));
+        return linkLast(fill(c, p(c).getString("m_" + key(k), def(c, k))));
+    }
+
+    static final java.util.regex.Pattern URL = java.util.regex.Pattern.compile(
+            "(?<![@\\w.-])(https?://\\S+|www\\.\\S+|[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.(?:co\\.kr|com|kr|net|site|me|io|link|page)(?:/\\S*)?)");
+
+    /** 문구 안의 링크를 모두 맨 아래 줄로 옮기고 https:// 를 붙여줌 (그래야 받는 폰에 명함 그림 미리보기가 떠요) */
+    static String linkLast(String t) {
+        java.util.ArrayList<String> links = new java.util.ArrayList<>();
+        StringBuilder o = new StringBuilder();
+        for (String line : t.split("\n", -1)) {
+            java.util.regex.Matcher m = URL.matcher(line);
+            StringBuffer sb = new StringBuffer();
+            boolean found = false;
+            while (m.find()) {
+                String u = m.group(1).replaceAll("[)\\].,!?]+$", "");
+                if (!u.startsWith("http")) u = "https://" + u;
+                if (!links.contains(u)) links.add(u);
+                m.appendReplacement(sb, "");
+                found = true;
+            }
+            m.appendTail(sb);
+            String x = found ? sb.toString().replaceAll(" {2,}", " ").trim() : line;
+            if (found && (x.isEmpty() || x.matches("[\\s:：→\\-]*"))) continue;
+            if (o.length() > 0) o.append("\n");
+            o.append(x);
+        }
+        String body = o.toString().trim();
+        for (String u : links) body += "\n" + u;
+        return body.trim();
     }
 
     static String fill(Context c, String t) {

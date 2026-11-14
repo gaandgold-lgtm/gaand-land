@@ -153,7 +153,7 @@ public class MainActivity extends Activity {
             ed[k] = box(Core.raw(this, k));
             l.addView(ed[k]);
         }
-        l.addView(tv("", 6, false, 0));
+        l.addView(tv("💡 링크는 문구 어디에 적어도, 보낼 때 자동으로 맨 아래 줄로 옮겨지고 https:// 도 붙어요. (그래야 받는 사람 폰에 명함 그림이 떠요)", 15, true, 0xFF2F7D5B));
         once = new Switch(this);
         once.setText("같은 번호는 하루에 한 번만 묻기");
         once.setTextSize(17);
