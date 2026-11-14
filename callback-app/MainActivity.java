@@ -174,7 +174,7 @@ public class MainActivity extends Activity {
         imgOn.setText("문자에 명함 이미지 붙이기");
         imgOn.setTextSize(16);
         imgOn.setChecked(Core.p(this).getBoolean("img_on", true));
-        imgOn.setOnCheckedChangeListener((b, c) -> Core.p(this).edit().putBoolean("img_on", c).apply());
+        imgOn.setOnCheckedChangeListener((cb, on) -> Core.p(this).edit().putBoolean("img_on", on).apply());
         l.addView(imgOn);
         l.addView(btn("명함 이미지 고르기 (갤러리)", false, v -> {
             Intent pick = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE);
