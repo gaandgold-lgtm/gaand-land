@@ -36,10 +36,13 @@ public class Core {
     }
 
     static final java.util.regex.Pattern URL = java.util.regex.Pattern.compile(
-            "(?<![@\\w.-])(https?://\\S+|www\\.\\S+|[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.(?:co\\.kr|com|kr|net|site|me|io|link|page)(?:/\\S*)?)");
+            "(?i)(https?://\\S+)|(?<![@\\w.-])(www\\.\\S+|[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*\\.(?:co\\.kr|com|kr|net|site|me|io|link|page)(?:/\\S*)?)");
 
     /** 문구 안의 링크를 모두 맨 아래 줄로 옮기고 https:// 를 붙여줌 (그래야 받는 폰에 명함 그림 미리보기가 떠요) */
     static String linkLast(String t) {
+        t = t.replaceAll("(?i)https?://\\s*(?=https?://)", "")
+             .replaceAll("(?i)(https?://)\\s+(?=[A-Za-z0-9])", "$1")
+             .replaceAll("(?i)https?://(?![A-Za-z0-9])", "");
         java.util.ArrayList<String> links = new java.util.ArrayList<>();
         StringBuilder o = new StringBuilder();
         for (String line : t.split("\n", -1)) {
@@ -47,10 +50,10 @@ public class Core {
             StringBuffer sb = new StringBuffer();
             boolean found = false;
             while (m.find()) {
-                String u = m.group(1).replaceAll("[)\\].,!?]+$", "");
-                if (!u.startsWith("http")) u = "https://" + u;
+                String u = (m.group(1) != null ? m.group(1) : m.group(2)).replaceAll("[)\\].,!?]+$", "");
+                if (!u.toLowerCase().startsWith("http")) u = "https://" + u;
                 if (!links.contains(u)) links.add(u);
-                m.appendReplacement(sb, "");
+                m.appendReplacement(sb, " ");
                 found = true;
             }
             m.appendTail(sb);
@@ -189,7 +192,8 @@ public class Core {
         Intent s = new Intent(c, ActionReceiver.class).setAction("SEND")
                 .putExtra("num", num).putExtra("kind", k).putExtra("nid", nid);
         PendingIntent ps;
-        if (p(c).getBoolean("viaApp", true)) {
+        boolean img = p(c).getBoolean("img_on", true) && CardProvider.file(c).exists();
+        if (img || p(c).getBoolean("viaApp", true)) {
             Intent sa = new Intent(c, SendActivity.class).putExtra("num", num).putExtra("kind", k).putExtra("nid", nid)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
             ps = PendingIntent.getActivity(c, nid * 3, sa, fl);
@@ -200,6 +204,8 @@ public class Core {
         PendingIntent px = PendingIntent.getBroadcast(c, nid * 3 + 1, x, fl);
         Intent e = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + num))
                 .putExtra("sms_body", msg(c, k)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (img) e = new Intent(c, SendActivity.class).putExtra("num", num).putExtra("kind", k).putExtra("nid", nid)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         PendingIntent pe = PendingIntent.getActivity(c, nid * 3 + 2, e, fl);
         Notification n = new Notification.Builder(c, CH)
                 .setSmallIcon(android.R.drawable.sym_action_chat)
