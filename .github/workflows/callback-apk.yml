@@ -28,7 +28,7 @@ jobs:
           cp callback-app/AndroidManifest.xml $P/app/src/main/
           cp callback-app/ic_*.xml $P/app/src/main/res/drawable/
           cp callback-app/gaand.jks $P/app/gaand.jks
-          for B in gaand victory pro; do
+          for B in gaand pro; do
             mkdir -p $P/app/src/$B/res/values $P/app/src/$B/res/drawable
             cp callback-app/$B/strings.xml $P/app/src/$B/res/values/strings.xml
             cp callback-app/$B/ic_launcher.xml $P/app/src/$B/res/drawable/ic_launcher.xml
@@ -71,7 +71,6 @@ jobs:
             flavorDimensions 'brand'
             productFlavors {
               gaand { dimension 'brand'; applicationId 'kr.gaand.callback' }
-              victory { dimension 'brand'; applicationId 'kr.victorygift.callback' }
               pro { dimension 'brand'; applicationId 'kr.gaand.callcard' }
             }
             buildTypes {
@@ -87,7 +86,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp build/proj/app/build/outputs/apk/gaand/debug/app-gaand-debug.apk gaand-callback.apk
-          cp build/proj/app/build/outputs/apk/victory/debug/app-victory-debug.apk victory-callback.apk
           cp build/proj/app/build/outputs/apk/pro/debug/app-pro-debug.apk callcard.apk
           gh release delete callback-app --yes --cleanup-tag || true
-          gh release create callback-app gaand-callback.apk victory-callback.apk callcard.apk --title "가앤 명함문자 앱" --notes "통화가 끝나면 묻고, 승인하면 명함 문자를 보내는 앱"
+          gh release create callback-app gaand-callback.apk callcard.apk --title "가앤 명함문자 앱" --notes "통화가 끝나면 묻고, 승인하면 명함 문자를 보내는 앱"
