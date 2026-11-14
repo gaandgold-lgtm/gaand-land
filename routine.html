@@ -849,6 +849,7 @@ document.addEventListener('click',async function(e){
       toast('파일을 받은 뒤 눌러서 캘린더에 추가해 주세요');
     }catch(er){ toast('파일 저장이 막혔어요. 구글 캘린더 버튼을 써 주세요'); }
   }
+  else if(act==='alarm'&&APP&&window.GaanApp.setClockAlarm){ var tp=prefs.time.split(':'); try{ window.GaanApp.setClockAlarm(+tp[0],+tp[1],'루틴 체크: 남은 루틴 확인'); }catch(er){ toast('시계 앱을 열 수 없어요'); } }
   else if(act==='alarm'){ try{ location.href=reminderLinks().intent; toast('시계 앱이 열리지 않으면 캘린더 알림을 써 주세요'); }catch(er){ toast('이 기기에서는 열 수 없어요'); } }
 });
 document.addEventListener('change',function(e){
