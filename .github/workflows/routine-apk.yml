@@ -1,0 +1,81 @@
+name: build-routine-apk
+on:
+  push:
+    paths:
+      - 'routine-app/**'
+      - '.github/workflows/routine-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Make project
+        run: |
+          set -e
+          P=build/rproj
+          mkdir -p $P/app/src/main/java/kr/gaand/routine $P/app/src/main/res/drawable
+          cp routine-app/*.java $P/app/src/main/java/kr/gaand/routine/
+          cp routine-app/AndroidManifest.xml $P/app/src/main/
+          cp routine-app/ic_*.xml $P/app/src/main/res/drawable/
+          cp callback-app/gaand.jks $P/app/gaand.jks
+          cat > $P/settings.gradle <<'X'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          rootProject.name = 'gaanroutine'
+          include ':app'
+          X
+          cat > $P/build.gradle <<'X'
+          plugins { id 'com.android.application' version '8.5.2' apply false }
+          X
+          cat > $P/gradle.properties <<'X'
+          org.gradle.jvmargs=-Xmx2g
+          X
+          cat > $P/app/build.gradle <<X
+          plugins { id 'com.android.application' }
+          android {
+            namespace 'kr.gaand.routine'
+            compileSdk 34
+            defaultConfig {
+              applicationId 'kr.gaand.routine'
+              minSdk 26
+              targetSdk 34
+              versionCode ${{ github.run_number }}
+              versionName '1.${{ github.run_number }}'
+            }
+            compileOptions {
+              sourceCompatibility JavaVersion.VERSION_17
+              targetCompatibility JavaVersion.VERSION_17
+            }
+            signingConfigs {
+              gaand {
+                storeFile file('gaand.jks')
+                storePassword 'gaand1234'
+                keyAlias 'gaand'
+                keyPassword 'gaand1234'
+              }
+            }
+            buildTypes {
+              debug { signingConfig signingConfigs.gaand }
+            }
+            lint { abortOnError false; checkReleaseBuilds false }
+          }
+          X
+      - name: Build APK
+        run: cd build/rproj && gradle assembleDebug --no-daemon --stacktrace
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build/rproj/app/build/outputs/apk/debug/app-debug.apk gaan-routine.apk
+          gh release delete routine-app --yes --cleanup-tag || true
+          gh release create routine-app gaan-routine.apk --title "가앤 루틴 달력 앱" --notes "매일 루틴 체크, 남은 루틴 알림"
