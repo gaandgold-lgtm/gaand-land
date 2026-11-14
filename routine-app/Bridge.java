@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.AlarmClock;
 import android.provider.MediaStore;
+import java.util.ArrayList;
+import java.util.Calendar;
 import android.util.Base64;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
@@ -36,6 +39,26 @@ public class Bridge {
             if (rem == 0) Reminder.cancelNotice(a);
             if (changed || rem == 0) Reminder.schedule(a);
         } catch (Exception ignored) { }
+    }
+
+    /** 삼성 시계 앱 등 기본 시계 앱에 매일 반복 알람 만들기 */
+    @JavascriptInterface public boolean setClockAlarm(int hh, int mm, String msg) {
+        try {
+            ArrayList<Integer> days = new ArrayList<>();
+            for (int d = Calendar.SUNDAY; d <= Calendar.SATURDAY; d++) days.add(d);
+            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM)
+                    .putExtra(AlarmClock.EXTRA_HOUR, hh)
+                    .putExtra(AlarmClock.EXTRA_MINUTES, mm)
+                    .putExtra(AlarmClock.EXTRA_MESSAGE, msg)
+                    .putExtra(AlarmClock.EXTRA_DAYS, days)
+                    .putExtra(AlarmClock.EXTRA_SKIP_UI, false)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            a.runOnUiThread(() -> {
+                try { a.startActivity(i); }
+                catch (Exception e) { Toast.makeText(a, "시계 앱을 열 수 없어요. 앱 알람은 그대로 울려요", Toast.LENGTH_LONG).show(); }
+            });
+            return true;
+        } catch (Exception e) { return false; }
     }
 
     static byte[] png(String dataUrl) {
