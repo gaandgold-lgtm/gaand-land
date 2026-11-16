@@ -29,6 +29,7 @@ public class Bridge {
             SharedPreferences p = Reminder.p(a);
             boolean on = o.optBoolean("on", true);
             String time = o.optString("time", "21:00");
+            if (!time.matches("([01]?\\d|2[0-3]):[0-5]?\\d")) time = "21:00";
             boolean changed = !p.contains("time") || on != p.getBoolean("on", true) || !time.equals(p.getString("time", ""));
             int rem = o.optInt("remaining", 0);
             p.edit().putBoolean("on", on).putString("time", time)

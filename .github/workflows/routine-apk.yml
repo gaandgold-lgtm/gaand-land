@@ -1,6 +1,7 @@
 name: build-routine-apk
 on:
   push:
+    branches: [main]
     paths:
       - 'routine-app/**'
       - '.github/workflows/routine-apk.yml'
@@ -66,16 +67,17 @@ jobs:
             }
             buildTypes {
               debug { signingConfig signingConfigs.gaand }
+              release { signingConfig signingConfigs.gaand; minifyEnabled false }
             }
             lint { abortOnError false; checkReleaseBuilds false }
           }
           X
       - name: Build APK
-        run: cd build/rproj && gradle assembleDebug --no-daemon --stacktrace
+        run: cd build/rproj && gradle assembleRelease --no-daemon --stacktrace
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp build/rproj/app/build/outputs/apk/debug/app-debug.apk gaan-routine.apk
+          cp build/rproj/app/build/outputs/apk/release/app-release.apk gaan-routine.apk
           gh release delete routine-app --yes --cleanup-tag || true
           gh release create routine-app gaan-routine.apk --title "가앤 루틴 달력 앱" --notes "매일 루틴 체크, 남은 루틴 알림"
