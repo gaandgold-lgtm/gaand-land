@@ -47,10 +47,15 @@ public class Reminder {
     }
 
     static long mainTime(Context c, boolean allowToday) {
-        String[] t = p(c).getString("time", "21:00").split(":");
+        int hh = 21, mm = 0;
+        try {
+            String[] t = p(c).getString("time", "21:00").split(":");
+            hh = Integer.parseInt(t[0].trim());
+            mm = Integer.parseInt(t[1].trim());
+        } catch (Exception ignored) { hh = 21; mm = 0; }
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(t[0]));
-        cal.set(Calendar.MINUTE, Integer.parseInt(t[1]));
+        cal.set(Calendar.HOUR_OF_DAY, hh);
+        cal.set(Calendar.MINUTE, mm);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         if (!allowToday || cal.getTimeInMillis() <= System.currentTimeMillis() + 5000) cal.add(Calendar.DAY_OF_MONTH, 1);

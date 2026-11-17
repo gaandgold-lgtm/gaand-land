@@ -255,7 +255,9 @@ public class Core {
             if (sm == null) sm = SmsManager.getDefault();
             for (String part : chunks(text)) {
                 if (part.trim().length() == 0) continue;
-                sm.sendTextMessage(num, null, part, null, null);
+                ArrayList<String> ps = sm.divideMessage(part);
+                if (ps != null && ps.size() > 1) sm.sendMultipartTextMessage(num, null, ps, null, null);
+                else sm.sendTextMessage(num, null, part, null, null);
                 try { Thread.sleep(1500); } catch (InterruptedException ie) { }
             }
             p(c).edit().putLong("sent_" + num, System.currentTimeMillis()).apply();

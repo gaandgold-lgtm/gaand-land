@@ -24,14 +24,15 @@ ol{padding-left:20px}li{margin:6px 0}
 <div id="setup" class="card" hidden>
 <b>처음 한 번만: 열쇠(토큰) 넣기</b>
 <ol>
-<li><a href="https://github.com/settings/tokens/new?scopes=public_repo&description=%EC%BD%9C%EB%AA%85%ED%95%A8%EA%B4%80%EB%A6%AC" target="_blank"><b>여기 누르기</b></a> (GitHub 로그인 상태여야 해요. 이름·권한은 자동으로 채워져 있어요)</li>
-<li><b>Expiration</b>(만료) 칸을 눌러 <b>No expiration</b>(만료 없음) 고르기</li>
+<li><a href="https://github.com/settings/personal-access-tokens/new?name=callcard-admin&expires_in=365&contents=write" target="_blank" rel="noopener"><b>여기 누르기</b></a> (GitHub 로그인 상태여야 해요. 이름·기간(1년)·권한은 자동으로 채워져 있어요)</li>
+<li><b>Repository access</b>에서 <b>Only select repositories</b>를 고르고 <b>gaand-land</b> 하나만 선택하기</li>
+<li><b>Permissions</b>에 <b>Contents: Read and write</b>가 있는지 확인하기 (없으면 Add permissions → Contents → Read and write)</li>
 <li>맨 아래 초록 버튼 <b>Generate token</b>(토큰 생성) 누르기</li>
-<li>나온 글자(ghp_로 시작) 옆 <b>복사 아이콘</b> 누르기</li>
+<li>나온 글자(github_pat_로 시작) 옆 <b>복사 아이콘</b> 누르기</li>
 <li>이 페이지로 돌아와 아래 칸에 붙여넣고 <b>저장하고 시작</b></li>
 </ol>
-<p class="mut">이 열쇠는 이 휴대폰에만 저장돼요. 남에게 보여주지 마세요.</p>
-<input id="tok" placeholder="ghp_... 붙여넣기" autocomplete="off">
+<p class="mut">이 열쇠는 이 휴대폰에만 저장돼요. 남에게 보여주지 마세요. 1년 뒤 만료되면 같은 방법으로 새로 만들어 넣으면 돼요.</p>
+<input id="tok" placeholder="github_pat_... 붙여넣기" autocomplete="off">
 <div class="row"><button id="savetok">저장하고 시작</button></div>
 </div>
 

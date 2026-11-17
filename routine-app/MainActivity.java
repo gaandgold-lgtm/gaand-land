@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
     boolean handle(String u) {
         Uri uri = Uri.parse(u);
         String sc = uri.getScheme(), host = uri.getHost(), path = uri.getPath();
-        if (("https".equals(sc) || "http".equals(sc)) && host != null && host.endsWith("gaandgold.co.kr")
+        if ("https".equals(sc) && "land.gaandgold.co.kr".equalsIgnoreCase(host)
                 && path != null && path.startsWith("/routine")) return false;
         try {
             Intent i;
