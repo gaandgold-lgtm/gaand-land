@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<title>문자 보내기 | 가앤부동산</title>
+<link rel="stylesheet" href="send.css">
+</head>
+<body>
+<main class="wrap">
+  <h1>문자 보내기</h1>
+  <p class="lead">받는 번호와 내용을 확인한 뒤, 아래 버튼을 눌러 문자앱을 열어 주세요. 직접 <b>보내기</b>를 눌러야 전송돼요.</p>
+  <section id="ready" hidden>
+    <div class="label">받는 번호</div>
+    <div class="num" id="num"></div>
+    <div class="label">문자 내용</div>
+    <pre class="body" id="body"></pre>
+    <a class="btn primary" id="open" href="#">문자앱 열기</a>
+    <div class="row">
+      <button class="btn" id="cpBody" type="button">내용 복사</button>
+      <button class="btn" id="cpNum" type="button">번호 복사</button>
+    </div>
+    <p class="note" id="note"></p>
+  </section>
+  <section id="empty" hidden>
+    <p class="warn">보낼 문자 내용이 없어요. 가앤 접수관리 앱에서 문자 보내기 버튼을 다시 눌러 주세요.</p>
+  </section>
+  <p class="foot">이 화면의 내용은 저장하거나 서버로 보내지 않아요. 모르는 사람이 보낸 링크라면 열지 마세요.</p>
+</main>
+<script src="send.js"></script>
+</body>
+</html>
