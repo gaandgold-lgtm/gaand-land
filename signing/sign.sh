@@ -12,6 +12,9 @@ OLD=(--ks "$HERE/../callback-app/gaand.jks" --ks-key-alias gaand --ks-pass pass:
 if [ -n "${SIGN_KEY_B64:-}" ] && [ -n "${SIGN_KEY_PASS:-}" ]; then
   NEW="$(mktemp --suffix=.p12)"
   printf %s "$SIGN_KEY_B64" | tr -d ' \r\n' | base64 -d > "$NEW"
+  # 붙여넣기 오류로 줄바꿈/공백이 섞였을 수 있으니 정리 후 환경변수 갱신
+  SIGN_KEY_PASS="$(printf '%s' "$SIGN_KEY_PASS" | tr -d ' \t\r\n')"
+  export SIGN_KEY_PASS
   "$BT/apksigner" sign "${OLD[@]}" \
     --next-signer --ks "$NEW" --ks-key-alias gaand2 --ks-pass env:SIGN_KEY_PASS \
     --lineage "$HERE/lineage.bin" --rotation-min-sdk-version 28 \
