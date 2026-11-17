@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'callback-app/**'
+      - 'signing/**'
       - '.github/workflows/callback-apk.yml'
   workflow_dispatch:
 permissions:
@@ -76,7 +77,7 @@ jobs:
             }
             buildTypes {
               debug { signingConfig signingConfigs.gaand }
-              release { signingConfig signingConfigs.gaand; minifyEnabled false }
+              release { minifyEnabled false }
             }
             lint { abortOnError false; checkReleaseBuilds false }
           }
@@ -86,9 +87,11 @@ jobs:
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
+          SIGN_KEY_B64: ${{ secrets.SIGN_KEY_B64 }}
+          SIGN_KEY_PASS: ${{ secrets.SIGN_KEY_PASS }}
         run: |
-          cp build/proj/app/build/outputs/apk/gaand/release/app-gaand-release.apk gaand-callback.apk
-          cp build/proj/app/build/outputs/apk/pro/release/app-pro-release.apk callcard.apk
+          signing/sign.sh build/proj/app/build/outputs/apk/gaand/release/app-gaand-release-unsigned.apk gaand-callback.apk
+          signing/sign.sh build/proj/app/build/outputs/apk/pro/release/app-pro-release-unsigned.apk callcard.apk
           cp callcard.apk victory-callback.apk
           gh release delete callback-app --yes --cleanup-tag || true
           gh release create callback-app gaand-callback.apk victory-callback.apk callcard.apk --title "가앤 명함문자 앱" --notes "통화가 끝나면 묻고, 승인하면 명함 문자를 보내는 앱"
