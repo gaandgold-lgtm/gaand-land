@@ -5,7 +5,22 @@
 set -euo pipefail
 IN="$1"; OUT="$2"
 HERE="$(cd "$(dirname "$0")" && pwd)"
-BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+
+# build-tools 위치 찾기 (ANDROID_HOME, ~/.android/sdk, 시스템 경로 순으로 시도)
+_find_bt() {
+  for dir in \
+    "${ANDROID_HOME:-__none__}/build-tools" \
+    "$HOME/.android/sdk/build-tools" \
+    /usr/local/lib/android/sdk/build-tools; do
+    [ -d "$dir" ] || continue
+    local bt
+    bt="$(ls -d "$dir"/* 2>/dev/null | sort -V | tail -1)"
+    [ -n "$bt" ] && [ -f "$bt/apksigner" ] && { echo "$bt"; return 0; }
+  done
+  return 1
+}
+BT="$(_find_bt)" || { echo "ERROR: apksigner를 찾을 수 없어요. Android build-tools를 설치해야 해요." >&2; exit 1; }
+echo "build-tools 경로: $BT"
 ALIGNED="$(mktemp --suffix=.apk)"
 "$BT/zipalign" -f -p 4 "$IN" "$ALIGNED"
 OLD=(--ks "$HERE/../callback-app/gaand.jks" --ks-key-alias gaand --ks-pass pass:gaand1234 --key-pass pass:gaand1234)
