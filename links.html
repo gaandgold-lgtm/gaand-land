@@ -2,7 +2,6 @@
 <html lang="ko"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>가앤 전체 메뉴 | 가앤부동산공인중개사사무소 · 가앤주얼리</title>
 <meta name="description" content="가앤부동산공인중개사사무소와 가앤주얼리 바로가기. 전화 상담, 집 내놓기, 단지 안내, 순금 쇼핑몰.">
 <meta property="og:title" content="가앤 바로가기">
 <meta property="og:description" content="부동산 상담 · 집 내놓기 · 단지 안내 · 가앤주얼리">
@@ -10,43 +9,56 @@
 <meta property="og:url" content="https://land.gaandgold.co.kr/links.html">
 <meta property="og:image" content="https://land.gaandgold.co.kr/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="style.css">
+<title>가앤 | 가앤부동산공인중개사사무소 · 가앤주얼리</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600&display=swap">
 <style>
-body{padding-bottom:40px}
-.top{text-align:center;padding:44px 0 22px}
-.mark{width:76px;height:76px;border-radius:50%;margin:0 auto 14px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px;letter-spacing:-.5px}
-.top h1{font-size:22px;margin-bottom:4px}
-.top p{color:var(--muted);font-size:14px}
-.lk{display:grid;gap:10px}
-.lk a{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 18px;text-decoration:none;color:var(--ink);font-weight:700;font-size:16px}
-.lk a small{display:block;color:var(--muted);font-weight:500;font-size:13px}
-.lk a.main{background:var(--brand);border-color:var(--brand);color:#fff}
-.lk a.main small{color:#e6dbf2}
-.lk .ic{font-size:22px;width:28px;text-align:center}
-.lk h2{font-size:13px;color:var(--muted);font-weight:600;margin:16px 0 0;letter-spacing:.3px}
+:root{--bg:#f6f3ee;--paper:#fbf9f5;--ink:#1d1a1f;--sub:#6f6a66;--line:#e2dcd2;--gold:#9c7c45;--plum:#3b2a55}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:Pretendard,-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:460px;margin:0 auto;padding:0 28px}
+header{padding:64px 0 36px;text-align:center}
+.mark{font-family:'Noto Serif KR',serif;font-size:44px;font-weight:600;letter-spacing:.02em;color:var(--ink);line-height:1}
+.mark b{color:var(--gold);font-weight:600}
+.rule{width:28px;height:1px;background:var(--gold);margin:22px auto 18px}
+.name{font-size:15px;font-weight:600;letter-spacing:.32em;padding-left:.32em}
+.desc{margin-top:8px;font-size:13px;color:var(--sub);letter-spacing:.02em}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:28px}
+.tabs button{flex:1;background:none;border:0;padding:14px 0 13px;font:inherit;font-size:15px;color:var(--sub);cursor:pointer;border-bottom:1.5px solid transparent;margin-bottom:-1px;letter-spacing:.04em}
+.tabs button.on{color:var(--ink);font-weight:600;border-bottom-color:var(--ink)}
+.panel{display:none}.panel.on{display:block}
+.lead{display:block;background:var(--ink);color:#fbf9f5;border-radius:2px;padding:22px 24px;margin-bottom:8px}
+.lead small{display:block;font-size:12px;letter-spacing:.14em;color:#cbb58a;margin-bottom:6px}
+.lead strong{display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:600;letter-spacing:.01em}
+.lead strong i{font-style:normal;font-weight:300;font-size:18px;opacity:.8}
+.plum{background:var(--plum)}
+ul{list-style:none}
+li a{display:flex;align-items:center;justify-content:space-between;padding:20px 2px;border-bottom:1px solid var(--line)}
+li a span{display:block}
+li a b{display:block;font-size:16px;font-weight:600}
+li a em{display:block;font-style:normal;font-size:13px;color:var(--sub);margin-top:3px}
+li a i{font-style:normal;color:var(--gold);font-size:17px;font-weight:300;padding-left:12px}
+li a:active{background:#f0ebe3}
+footer{margin-top:56px;padding:28px 0 48px;border-top:1px solid var(--line);font-size:11.5px;color:var(--sub);line-height:1.8;text-align:center;letter-spacing:.01em}
+footer strong{color:var(--ink);font-weight:600}
 </style>
-<script src="inapp.js"></script>
-</head>
-<body>
+</head><body>
+<header class="wrap"><div class="mark">GA<b>&amp;</b></div><div class="rule"></div><p class="name">가앤</p><p class="desc">부동산 · 주얼리 &nbsp;|&nbsp; 인천 미추홀구 숭의동</p></header>
 <main class="wrap">
-  <div class="top">
-    <div class="mark">GA&amp;</div>
-    <h1>가앤</h1>
-    <p>공인중개사사무소 · 주얼리 · 인천 미추홀구 숭의동</p>
-  </div>
-  <div class="lk"><div style="display:flex;gap:10px;margin:0 0 18px"><a href="#land" style="flex:1;text-align:center;padding:12px 0;border-radius:14px;border:1.5px solid #c9a96e;color:#8a6d2f;font-weight:700;text-decoration:none;background:#fffdf8">🏠 부동산</a><a href="#jewelry" style="flex:1;text-align:center;padding:12px 0;border-radius:14px;border:1.5px solid #c9a96e;color:#8a6d2f;font-weight:700;text-decoration:none;background:#fffdf8">💍 주얼리</a></div>
-    <h2 id="land" style="scroll-margin-top: 16px;">🏠 가앤부동산</h2>
-    <a class="main" href="tel:01081868816"><span class="ic">📞</span><span>전화 상담 010-8186-8816<small>매매 · 전세 · 월세 · 상가</small></span></a>
-    <a href="sell.html"><span class="ic">📩</span><span>집 내놓기 1분 접수<small>문자로 바로 전달돼요</small></span></a>
-    <a href="./#danji"><span class="ic">🏢</span><span>숭의동·송림동 단지 안내<small>99개 단지 검색</small></span></a>
-    <a href="./"><span class="ic">🏠</span><span>가앤부동산공인중개사사무소 홈페이지</span></a>
-    <a href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%20%EB%AF%B8%EC%B6%94%ED%99%80%EA%B5%AC%20%EC%83%88%EC%B2%9C%EB%85%84%EB%A1%9C5%EB%B2%88%EA%B8%B8%2045" target="_blank" rel="noopener"><span class="ic">📍</span><span>찾아오시는 길<small>새천년로5번길 45</small></span></a>
-    <h2 id="jewelry" style="scroll-margin-top: 16px;">💍 가앤주얼리</h2><a href="https://gaandgold.co.kr/" target="_blank" rel="noopener"><span class="ic">✨</span><span>가앤주얼리 순금 쇼핑몰<small>gaandgold.co.kr</small></span></a>
-    <a href="price.html"><span class="ic">💰</span><span>오늘의 금시세<small>순금 1돈 살 때 · 팔 때</small></span></a>
-    
-  </div>
+<nav class="tabs" role="tablist"><button class="on" data-t="land" role="tab">부동산</button><button data-t="jewelry" role="tab">주얼리</button></nav>
+<section class="panel on" id="land">
+<a class="lead plum" href="tel:01081868816"><small>CALL · 매매 전세 월세 상가</small><strong>010-8186-8816<i>→</i></strong></a>
+<ul><li><a href="sell.html"><span><b>집 내놓기</b><em>1분이면 접수돼요</em></span><i>→</i></a></li><li><a href="./#danji"><span><b>단지 안내</b><em>숭의동 · 송림동 아파트</em></span><i>→</i></a></li><li><a href="./"><span><b>홈페이지</b><em>가앤부동산공인중개사사무소</em></span><i>→</i></a></li><li><a href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%20%EB%AF%B8%EC%B6%94%ED%99%80%EA%B5%AC%20%EC%83%88%EC%B2%9C%EB%85%84%EB%A1%9C5%EB%B2%88%EA%B8%B8%2045" target="_blank" rel="noopener"><span><b>오시는 길</b><em>인천 미추홀구 새천년로5번길 45</em></span><i>→</i></a></li><li><a href="card.html"><span><b>대표 명함</b><em>연락처 저장</em></span><i>→</i></a></li></ul>
+</section>
+<section class="panel" id="jewelry">
+<a class="lead" href="https://gaandgold.co.kr/"><small>SHOP · 순금 주얼리</small><strong>가앤주얼리 쇼핑몰<i>→</i></strong></a>
+<ul><li><a href="price.html"><span><b>오늘의 금시세</b><em>순금 1돈 살 때 · 팔 때</em></span><i>→</i></a></li></ul>
+</section>
 </main>
-<footer><div class="wrap">© 가앤 · 중개사무소 등록번호 28177-2026-00054</div></footer>
-
-
+<footer class="wrap"><strong>가앤부동산공인중개사사무소</strong><br>대표 공인중개사 가현지 · 등록번호 28177-2026-00054<br>인천 미추홀구 새천년로5번길 45 · 010-8186-8816<br><br><strong>가앤주얼리</strong> · gaandgold.co.kr</footer>
+<script>(function(){var b=document.querySelectorAll('.tabs button');function s(t){b.forEach(function(x){x.classList.toggle('on',x.dataset.t===t)});document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id===t)});}b.forEach(function(x){x.onclick=function(){s(x.dataset.t);history.replaceState(null,'','#'+x.dataset.t)}});if(location.hash==='#jewelry')s('jewelry');})();</script>
+<script src="inapp.js"></script>
 </body></html>
