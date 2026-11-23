@@ -1,0 +1,1 @@
+from .alter import AlterPlatform
